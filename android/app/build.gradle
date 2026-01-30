@@ -81,7 +81,12 @@ android {
     
     packaging {
         jniLibs {
-            pickFirsts += ['**/librnworklets.so']
+            pickFirsts += [
+                'lib/arm64-v8a/librnworklets.so',
+                'lib/armeabi-v7a/librnworklets.so',
+                'lib/x86/librnworklets.so',
+                'lib/x86_64/librnworklets.so'
+            ]
         }
     }
 
