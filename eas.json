@@ -1,0 +1,41 @@
+{
+    "cli": {
+        "version": ">= 5.2.0",
+        "appVersionSource": "remote"
+    },
+    "build": {
+        "development": {
+            "developmentClient": true,
+            "distribution": "internal",
+            "android": {
+                "buildType": "apk",
+                "gradleCommand": ":app:assembleRelease",
+                "env": {
+                    "GRADLE_OPTS": "-Dorg.gradle.project.suppressKotlinVersionCompatibilityCheck=true"
+                }
+            }
+        },
+        "preview": {
+            "distribution": "internal",
+            "android": {
+                "buildType": "apk",
+                "gradleCommand": ":app:assembleRelease",
+                "env": {
+                    "GRADLE_OPTS": "-Dorg.gradle.project.suppressKotlinVersionCompatibilityCheck=true"
+                }
+            }
+        },
+        "production": {
+            "android": {
+                "buildType": "app-bundle",
+                "gradleCommand": ":app:bundleRelease",
+                "env": {
+                    "GRADLE_OPTS": "-Dorg.gradle.project.suppressKotlinVersionCompatibilityCheck=true"
+                }
+            }
+        }
+    },
+    "submit": {
+        "production": {}
+    }
+}

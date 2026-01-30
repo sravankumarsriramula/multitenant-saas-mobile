@@ -1,0 +1,16 @@
+# Ignore native directories - let EAS Build generate them
+android/
+ios/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore build artifacts
+.expo/
+dist/
+build/
+
+# Ignore environment files
+.env
+.env.local
+.env.*.local
