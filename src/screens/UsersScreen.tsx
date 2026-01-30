@@ -9,26 +9,38 @@ import {
     Alert,
     RefreshControl,
     Platform,
+    ActivityIndicator,
 } from 'react-native';
-import { userApi } from '../api/master';
-import { User } from '../types';
-import Loading from '../components/Loading';
-import Button from '../components/Button';
+import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import { API_BASE_URL } from '../constants/config';
+import { useAuthStore } from '../store/authStore';
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    tenantId: string;
+    createdAt: string;
+}
 
 const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const { token } = useAuthStore();
 
     const fetchUsers = async () => {
         try {
-            const data = await userApi.getAll();
-            setUsers(data);
+            const response = await axios.get(`${API_BASE_URL}/users`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setUsers(response.data);
         } catch (error: any) {
             const message = error.response?.data?.message || 'Failed to fetch users';
-            if (Platform.OS === 'web') {
-                alert(message);
-            } else {
+            console.error('Error fetching users:', error);
+            if (Platform.OS !== 'web') {
                 Alert.alert('Error', message);
             }
         } finally {
@@ -46,102 +58,102 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         fetchUsers();
     };
 
-    const handleDelete = async (id: string) => {
-        const confirmDelete = () => {
-            Alert.alert(
-                'Delete User',
-                'Are you sure you want to delete this user?',
-                [
-                    { text: 'Cancel', style: 'cancel' },
-                    {
-                        text: 'Delete',
-                        style: 'destructive',
-                        onPress: async () => {
-                            try {
-                                await userApi.delete(id);
-                                fetchUsers();
-                                if (Platform.OS === 'web') {
-                                    alert('User deleted successfully');
-                                } else {
-                                    Alert.alert('Success', 'User deleted successfully');
-                                }
-                            } catch (error: any) {
-                                const message = error.response?.data?.message || 'Failed to delete user';
-                                if (Platform.OS === 'web') {
-                                    alert(message);
-                                } else {
-                                    Alert.alert('Error', message);
-                                }
-                            }
-                        },
-                    },
-                ]
-            );
-        };
-
-        if (Platform.OS === 'web') {
-            if (confirm('Are you sure you want to delete this user?')) {
-                try {
-                    await userApi.delete(id);
-                    fetchUsers();
-                    alert('User deleted successfully');
-                } catch (error: any) {
-                    alert(error.response?.data?.message || 'Failed to delete user');
-                }
-            }
-        } else {
-            confirmDelete();
-        }
-    };
-
     const renderUser = ({ item }: { item: User }) => (
         <TouchableOpacity
             style={styles.userCard}
             activeOpacity={0.7}
         >
-            <View style={styles.userInfo}>
-                <View style={styles.userHeader}>
-                    <Text style={styles.userName}>{item.name}</Text>
-                    <Text style={styles.userRole}>{item.role}</Text>
+            <View style={styles.avatarContainer}>
+                <View style={[styles.avatar, { backgroundColor: item.role.toLowerCase() === 'admin' ? '#EF4444' : '#10B981' }]}>
+                    <Text style={styles.avatarText}>{item.name[0].toUpperCase()}</Text>
                 </View>
-                <Text style={styles.userEmail}>{item.email}</Text>
-                <Text style={styles.userTenant}>Tenant: {item.tenantId}</Text>
-                <Text style={styles.userDate}>
-                    Joined: {new Date(item.createdAt).toLocaleDateString()}
-                </Text>
             </View>
-            <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => handleDelete(item.id)}
-            >
-                <Text style={styles.deleteIcon}>🗑️</Text>
-            </TouchableOpacity>
+            <View style={styles.userInfo}>
+                <Text style={styles.userName}>{item.name}</Text>
+                <Text style={styles.userEmail}>{item.email}</Text>
+                <View style={styles.metaRow}>
+                    <View style={[styles.roleBadge, {
+                        backgroundColor: item.role.toLowerCase() === 'admin' ? '#FEE2E2' : '#D1FAE5',
+                        borderColor: item.role.toLowerCase() === 'admin' ? '#EF4444' : '#10B981'
+                    }]}>
+                        <Text style={[styles.roleText, {
+                            color: item.role.toLowerCase() === 'admin' ? '#EF4444' : '#10B981'
+                        }]}>
+                            {item.role}
+                        </Text>
+                    </View>
+                    <Text style={styles.joinedText}>
+                        {new Date(item.createdAt).toLocaleDateString()}
+                    </Text>
+                </View>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#94A3B8" />
         </TouchableOpacity>
     );
 
     if (loading) {
-        return <Loading message="Loading users..." />;
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
+                        <Ionicons name="menu" size={24} color="#334155" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Users</Text>
+                    <View style={{ width: 40 }} />
+                </View>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#007AFF" />
+                    <Text style={styles.loadingText}>Loading users...</Text>
+                </View>
+            </SafeAreaView>
+        );
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Users</Text>
-                <Text style={styles.count}>{users.length} users</Text>
+                <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
+                    <Ionicons name="menu" size={24} color="#334155" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Users</Text>
+                <TouchableOpacity style={styles.addButton}>
+                    <Ionicons name="add-circle-outline" size={24} color="#007AFF" />
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.statsBar}>
+                <View style={styles.statItem}>
+                    <Text style={styles.statValue}>{users.length}</Text>
+                    <Text style={styles.statLabel}>Total</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.statItem}>
+                    <Text style={styles.statValue}>
+                        {users.filter(u => u.role.toLowerCase() === 'admin').length}
+                    </Text>
+                    <Text style={styles.statLabel}>Admins</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.statItem}>
+                    <Text style={styles.statValue}>
+                        {users.filter(u => u.role.toLowerCase() === 'user').length}
+                    </Text>
+                    <Text style={styles.statLabel}>Users</Text>
+                </View>
             </View>
 
             <FlatList
                 data={users}
                 renderItem={renderUser}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.listContent}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#007AFF']} />
                 }
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
+                        <Ionicons name="people-outline" size={64} color="#CBD5E1" />
                         <Text style={styles.emptyText}>No users found</Text>
-                        <Text style={styles.emptySubtext}>Users will appear here</Text>
                     </View>
                 }
             />
@@ -152,21 +164,68 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F2F2F7',
+        backgroundColor: '#F8FAFC',
     },
     header: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingTop: Platform.OS === 'android' ? 40 : 12,
+        paddingBottom: 12,
         backgroundColor: '#FFFFFF',
         borderBottomWidth: 1,
-        borderBottomColor: '#E5E5EA',
-        ...Platform.select({
-            web: {
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-            },
-        }),
+        borderBottomColor: '#E2E8F0',
+    },
+    menuButton: {
+        padding: 4,
+    },
+    headerTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#0F172A',
+    },
+    addButton: {
+        padding: 4,
+    },
+    statsBar: {
+        flexDirection: 'row',
+        backgroundColor: '#FFFFFF',
+        paddingVertical: 16,
+        paddingHorizontal: 16,
+        marginBottom: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0',
+    },
+    statItem: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    statValue: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: '#0F172A',
+        marginBottom: 4,
+    },
+    statLabel: {
+        fontSize: 11,
+        color: '#64748B',
+        fontWeight: '500',
+    },
+    statDivider: {
+        width: 1,
+        backgroundColor: '#E2E8F0',
+        marginHorizontal: 12,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 12,
+        fontSize: 14,
+        color: '#64748B',
     },
     title: {
         fontSize: 28,
@@ -239,12 +298,41 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#8E8E93',
     },
-    deleteButton: {
-        padding: 8,
-        justifyContent: 'center',
+    avatarContainer: {
+        marginRight: 12,
     },
-    deleteIcon: {
-        fontSize: 24,
+    avatar: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    avatarText: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
+    metaRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    roleBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 6,
+        borderWidth: 1,
+        marginRight: 12,
+    },
+    roleText: {
+        fontSize: 11,
+        fontWeight: '600',
+        textTransform: 'uppercase',
+    },
+    joinedText: {
+        fontSize: 11,
+        color: '#94A3B8',
     },
     emptyContainer: {
         flex: 1,

@@ -195,7 +195,9 @@ const MainDrawerNavigator = () => {
                 swipeEnabled: true,
             }}
         >
-            <Drawer.Screen name="MainTabs" component={BottomTabNavigator} />
+            <Drawer.Screen name="Dashboard" component={BottomTabNavigator} />
+            <Drawer.Screen name="Users" component={UsersScreen} />
+            <Drawer.Screen name="Profile" component={ProfileScreen} />
         </Drawer.Navigator>
     );
 };

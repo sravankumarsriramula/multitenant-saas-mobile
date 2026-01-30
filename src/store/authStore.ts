@@ -29,12 +29,25 @@ export const useAuthStore = create<AuthState>((set) => ({
     login: async (credentials: LoginRequest) => {
         try {
             set({ isLoading: true, error: null });
+            console.log('🔐 Attempting login with:', { email: credentials.email });
+
             const response = await authApi.login(credentials);
+            console.log('✅ Login response received:', {
+                hasToken: !!response.token,
+                hasUser: !!response.user,
+                userName: response.user?.name,
+                hasTenantId: !!response.user?.tenantId
+            });
 
             // Save to AsyncStorage
             await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
             await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
-            await AsyncStorage.setItem(STORAGE_KEYS.TENANT_ID, response.user.tenantId);
+
+            // Only save tenantId if it exists
+            if (response.user.tenantId) {
+                await AsyncStorage.setItem(STORAGE_KEYS.TENANT_ID, response.user.tenantId);
+            }
+            console.log('💾 Saved to AsyncStorage');
 
             set({
                 user: response.user,
@@ -42,9 +55,18 @@ export const useAuthStore = create<AuthState>((set) => ({
                 isAuthenticated: true,
                 isLoading: false,
             });
+            console.log('✅ Login successful');
         } catch (error: any) {
+            console.error('❌ Login error:', {
+                message: error.message,
+                response: error.response?.data,
+                status: error.response?.status,
+                fullError: error
+            });
+
+            const errorMessage = error.response?.data?.message || error.message || 'Login failed';
             set({
-                error: error.response?.data?.message || 'Login failed',
+                error: errorMessage,
                 isLoading: false,
             });
             throw error;
@@ -59,7 +81,11 @@ export const useAuthStore = create<AuthState>((set) => ({
             // Save to AsyncStorage
             await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.token);
             await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(response.user));
-            await AsyncStorage.setItem(STORAGE_KEYS.TENANT_ID, response.user.tenantId);
+
+            // Only save tenantId if it exists
+            if (response.user.tenantId) {
+                await AsyncStorage.setItem(STORAGE_KEYS.TENANT_ID, response.user.tenantId);
+            }
 
             set({
                 user: response.user,
