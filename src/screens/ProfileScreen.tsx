@@ -1,0 +1,185 @@
+import React from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    SafeAreaView,
+    ScrollView,
+    Platform,
+} from 'react-native';
+import { useAuthStore } from '../store/authStore';
+import Button from '../components/Button';
+
+const ProfileScreen: React.FC = () => {
+    const { user, logout } = useAuthStore();
+
+    const handleLogout = async () => {
+        await logout();
+    };
+
+    const profileItems = [
+        { label: 'Name', value: user?.name || 'N/A' },
+        { label: 'Email', value: user?.email || 'N/A' },
+        { label: 'Role', value: user?.role || 'User' },
+        { label: 'Tenant ID', value: user?.tenantId || 'N/A' },
+        { label: 'User ID', value: user?.id || 'N/A' },
+    ];
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                <View style={styles.header}>
+                    <View style={styles.avatar}>
+                        <Text style={styles.avatarText}>
+                            {user?.name?.charAt(0).toUpperCase() || 'U'}
+                        </Text>
+                    </View>
+                    <Text style={styles.userName}>{user?.name || 'User'}</Text>
+                    <Text style={styles.userEmail}>{user?.email || ''}</Text>
+                </View>
+
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Account Information</Text>
+                    {profileItems.map((item, index) => (
+                        <View key={index} style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>{item.label}</Text>
+                            <Text style={styles.infoValue}>{item.value}</Text>
+                        </View>
+                    ))}
+                </View>
+
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Account Created</Text>
+                    <Text style={styles.dateText}>
+                        {user?.createdAt
+                            ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })
+                            : 'N/A'}
+                    </Text>
+                </View>
+
+                <View style={styles.actions}>
+                    <Button
+                        title="Logout"
+                        onPress={handleLogout}
+                        variant="danger"
+                        style={styles.logoutButton}
+                    />
+                </View>
+            </ScrollView>
+        </SafeAreaView>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F2F2F7',
+    },
+    scrollContent: {
+        padding: 20,
+        paddingBottom: 40,
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 32,
+        paddingVertical: 24,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        ...Platform.select({
+            web: {
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            },
+            default: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+            },
+        }),
+    },
+    avatar: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: '#007AFF',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    avatarText: {
+        fontSize: 36,
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+    },
+    userName: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#1C1C1E',
+        marginBottom: 4,
+    },
+    userEmail: {
+        fontSize: 16,
+        color: '#8E8E93',
+    },
+    section: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 16,
+        ...Platform.select({
+            web: {
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            },
+            default: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+            },
+        }),
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#1C1C1E',
+        marginBottom: 16,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F2F2F7',
+    },
+    infoLabel: {
+        fontSize: 15,
+        color: '#8E8E93',
+        fontWeight: '500',
+    },
+    infoValue: {
+        fontSize: 15,
+        color: '#1C1C1E',
+        fontWeight: '600',
+        maxWidth: '60%',
+        textAlign: 'right',
+    },
+    dateText: {
+        fontSize: 16,
+        color: '#1C1C1E',
+        fontWeight: '500',
+    },
+    actions: {
+        marginTop: 16,
+    },
+    logoutButton: {
+        marginTop: 8,
+    },
+});
+
+export default ProfileScreen;
