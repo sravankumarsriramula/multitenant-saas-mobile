@@ -14,6 +14,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import UsersScreen from '../screens/UsersScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import ShipmentsScreen from '../screens/ShipmentsScreen';
 import Loading from '../components/Loading';
 
 const Stack = createNativeStackNavigator();
@@ -39,9 +40,14 @@ const BottomTabNavigator = () => {
                 headerShown: false,
                 tabBarStyle: styles.tabBar,
                 tabBarShowLabel: true,
+                tabBarLabelPosition: 'below-icon', // Force label below icon
                 tabBarLabelStyle: styles.tabBarLabel,
                 tabBarActiveTintColor: '#2563EB',
                 tabBarInactiveTintColor: '#94A3B8',
+                // Ensure visible items split space evenly but don't force centering which might clip text
+                tabBarItemStyle: {
+                    flex: 1,
+                },
             }}
         >
             <Tab.Screen
@@ -50,7 +56,7 @@ const BottomTabNavigator = () => {
                 options={{
                     tabBarLabel: 'Home',
                     tabBarIcon: ({ color, focused }) => (
-                        <MaterialCommunityIcons name={focused ? "home" : "home-outline"} size={26} color={color} />
+                        <Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
                     ),
                 }}
             />
@@ -60,7 +66,7 @@ const BottomTabNavigator = () => {
                 options={{
                     tabBarLabel: 'Search',
                     tabBarIcon: ({ color, focused }) => (
-                        <MaterialCommunityIcons name="magnify" size={26} color={color} />
+                        <Ionicons name={focused ? "search" : "search-outline"} size={24} color={color} />
                     ),
                 }}
             />
@@ -71,7 +77,7 @@ const BottomTabNavigator = () => {
                     tabBarLabel: 'Updates',
                     tabBarIcon: ({ color, focused }) => (
                         <View>
-                            <MaterialCommunityIcons name={focused ? "bell" : "bell-outline"} size={26} color={color} />
+                            <Ionicons name={focused ? "notifications" : "notifications-outline"} size={24} color={color} />
                             <View style={styles.tabBadge} />
                         </View>
                     ),
@@ -83,8 +89,28 @@ const BottomTabNavigator = () => {
                 options={{
                     tabBarLabel: 'Profile',
                     tabBarIcon: ({ color, focused }) => (
-                        <MaterialCommunityIcons name={focused ? "account" : "account-outline"} size={26} color={color} />
+                        <Ionicons name={focused ? "person" : "person-outline"} size={24} color={color} />
                     ),
+                }}
+            />
+
+            {/* Hidden Tabs (Moved to end to prevent layout gaps) */}
+            <Tab.Screen
+                name="Shipments"
+                component={ShipmentsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' }, // Double ensure no space is taken
+                    tabBarLabel: 'Shipments'
+                }}
+            />
+            <Tab.Screen
+                name="Users"
+                component={UsersScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' }, // Double ensure no space is taken
+                    tabBarLabel: 'Users'
                 }}
             />
         </Tab.Navigator>
@@ -100,25 +126,26 @@ const CustomDrawerContent = (props: any) => {
         {
             title: 'OPERATIONS',
             items: [
-                { label: 'Shipments', icon: 'ferry', screen: 'Dashboard' },
-                { label: 'Quotations', icon: 'file-document-edit-outline', screen: 'Dashboard' },
-                { label: 'Orders', icon: 'clipboard-list-outline', screen: 'Dashboard' },
-                { label: 'Inventory', icon: 'warehouse', screen: 'Dashboard' },
+                { label: 'Dashboard', icon: 'view-dashboard-outline', screen: 'TabHome' },
+                { label: 'Shipments', icon: 'ferry', screen: 'Shipments' },
+                { label: 'Quotations', icon: 'file-document-edit-outline', screen: 'TabHome' },
+                { label: 'Orders', icon: 'clipboard-list-outline', screen: 'TabHome' },
+                { label: 'Inventory', icon: 'warehouse', screen: 'TabHome' },
             ]
         },
         {
             title: 'FINANCE',
             items: [
-                { label: 'Invoices', icon: 'receipt', screen: 'Dashboard' },
-                { label: 'Payments', icon: 'credit-card-outline', screen: 'Dashboard' },
-                { label: 'Purchase Orders', icon: 'file-sign', screen: 'Dashboard' },
+                { label: 'Invoices', icon: 'receipt', screen: 'TabHome' },
+                { label: 'Payments', icon: 'credit-card-outline', screen: 'TabHome' },
+                { label: 'Purchase Orders', icon: 'file-sign', screen: 'TabHome' },
             ]
         },
         {
             title: 'ADMIN',
             items: [
                 { label: 'Users', icon: 'account-group-outline', screen: 'Users' },
-                { label: 'Settings', icon: 'cog-outline', screen: 'Profile' },
+                { label: 'Settings', icon: 'cog-outline', screen: 'TabProfile' },
             ]
         }
     ];
@@ -153,7 +180,8 @@ const CustomDrawerContent = (props: any) => {
                                 key={i}
                                 style={styles.menuItem}
                                 onPress={() => {
-                                    props.navigation.navigate(item.screen);
+                                    // Navigate to the Dashboard (TabNavigator) and then to the specific screen
+                                    props.navigation.navigate('Dashboard', { screen: item.screen });
                                     props.navigation.closeDrawer();
                                 }}
                                 activeOpacity={0.6}
@@ -196,8 +224,8 @@ const MainDrawerNavigator = () => {
             }}
         >
             <Drawer.Screen name="Dashboard" component={BottomTabNavigator} />
-            <Drawer.Screen name="Users" component={UsersScreen} />
-            <Drawer.Screen name="Profile" component={ProfileScreen} />
+            {/* Other screens are now inside BottomTabNavigator to preserve the tab bar */}
+            {/* <Drawer.Screen name="Profile" component={ProfileScreen} /> */}
         </Drawer.Navigator>
     );
 };
@@ -321,34 +349,38 @@ const styles = StyleSheet.create({
     },
 
     // Bottom Tab Bar
+    // Bottom Tab Bar
     tabBar: {
         backgroundColor: '#FFFFFF',
         borderTopWidth: 1,
-        borderTopColor: '#E2E8F0',
-        height: Platform.OS === 'ios' ? 82 : 56,
-        paddingTop: 6,
-        paddingBottom: Platform.OS === 'ios' ? 22 : 6,
-        ...Platform.select({
-            web: { boxShadow: '0 -2px 10px rgba(0,0,0,0.03)' },
-            default: { elevation: 8 },
-        }),
+        borderTopColor: '#F1F5F9',
+        height: Platform.OS === 'ios' ? 88 : 68, // Standard height
+        paddingTop: 8,
+        paddingBottom: Platform.OS === 'ios' ? 28 : 8, // Balanced padding
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
     },
     tabIcon: {
-        fontSize: 24,
+        // Not used directly but good to have
     },
     tabBarLabel: {
-        fontSize: 10,
+        fontSize: 11,
         fontWeight: '600',
-        marginTop: 0,
+        marginBottom: 4, // Ensure it sits up from bottom
     },
     tabBadge: {
         position: 'absolute',
-        top: -2,
-        right: -2,
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        backgroundColor: '#2563EB',
+        top: -1,
+        right: -1,
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: '#EF4444',
+        borderWidth: 2,
+        borderColor: '#FFFFFF',
     }
 });
 
