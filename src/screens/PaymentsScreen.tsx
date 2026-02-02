@@ -10,7 +10,6 @@ import {
     TextInput
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
 
 // Mock Data
@@ -54,9 +53,7 @@ const getStatusColor = (status: string) => {
 };
 
 const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-    const { user, logout } = useAuthStore();
     const { theme } = useThemeStore();
-    const [menuVisible, setMenuVisible] = useState(false);
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
     const [isFilterExpanded, setIsFilterExpanded] = useState(false);
     const sections = groupData(MOCK_DATA);
@@ -152,14 +149,14 @@ const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                             <TouchableOpacity onPress={() => setIsSearchExpanded(true)} style={styles.iconButton}>
                                 <Ionicons name="search" size={20} color={theme.headerText} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.createButtonIconSmall, { backgroundColor: theme.surface }]}>
-                                <Ionicons name="add" size={20} color={theme.primary} />
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('GenericForm', { title: 'Payment' })}
+                                style={styles.addButton}
+                            >
+                                <Ionicons name="add" size={24} color={theme.headerText} />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.iconButton} onPress={() => setIsFilterExpanded(!isFilterExpanded)}>
                                 <Ionicons name={isFilterExpanded ? "filter" : "filter-outline"} size={20} color={theme.headerText} />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[styles.headerAvatar, { backgroundColor: theme.surface }]} onPress={() => setMenuVisible(!menuVisible)}>
-                                <Text style={[styles.avatarInitial, { color: theme.primary }]}>{user?.name?.[0] || 'U'}</Text>
                             </TouchableOpacity>
                         </View>
                     </>
@@ -204,15 +201,7 @@ const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 stickySectionHeadersEnabled={false}
             />
 
-            {/* User Menu */}
-            {menuVisible && (
-                <View style={[styles.userMenuPopup, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                    <TouchableOpacity style={styles.popupItem} onPress={() => { setMenuVisible(false); logout(); }}>
-                        <Ionicons name="log-out-outline" size={16} color={theme.error} style={{ marginRight: 8 }} />
-                        <Text style={{ color: theme.error, fontSize: 13 }}>Logout</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+            {/* User Menu removed */}
         </SafeAreaView>
     );
 };
@@ -238,6 +227,7 @@ const styles = StyleSheet.create({
     menuButton: { marginRight: 12 },
     headerTitle: { fontSize: 18, fontWeight: '700', color: '#FFFFFF' },
     headerRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+    addButton: { padding: 4 },
     iconButton: { padding: 4 },
     headerAvatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
     avatarInitial: { color: '#1E3A8A', fontWeight: 'bold' },

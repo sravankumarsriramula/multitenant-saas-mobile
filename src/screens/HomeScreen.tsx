@@ -18,9 +18,8 @@ const { width } = Dimensions.get('window');
 const screenWidth = width;
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-    const { user, logout } = useAuthStore();
     const { theme } = useThemeStore();
-    const [menuVisible, setMenuVisible] = useState(false);
+    // Removed user/logout menu state
 
     // --- CHART CONFIG ---
     const chartConfig = {
@@ -100,17 +99,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 <View style={styles.headerRight}>
                     <TouchableOpacity style={styles.iconButton}>
                         <Ionicons name="notifications-outline" size={20} color={theme.headerText} />
-                    </TouchableOpacity>
-
-                    {/* User Avatar */}
-                    <TouchableOpacity
-                        style={[styles.headerAvatar, { backgroundColor: theme.surface }]}
-                        onPress={() => setMenuVisible(!menuVisible)}
-                        activeOpacity={0.8}
-                    >
-                        <View style={styles.avatarCircle}>
-                            <Text style={[styles.avatarInitial, { color: theme.primary }]}>{user?.name?.[0] || 'U'}</Text>
-                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -224,29 +212,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
             </ScrollView>
 
-            {/* User Menu Popup */}
-            {menuVisible && (
-                <View style={styles.userMenuPopup}>
-                    <Text style={styles.menuPopupHeader}>User</Text>
-                    <TouchableOpacity style={styles.popupItem} onPress={() => { setMenuVisible(false); navigation.navigate('Profile'); }}>
-                        <Ionicons name="person-outline" size={16} color="#475569" style={styles.popupIcon} />
-                        <Text style={styles.popupText}>Profile</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.popupItem} onPress={() => setMenuVisible(false)}>
-                        <Ionicons name="key-outline" size={16} color="#475569" style={styles.popupIcon} />
-                        <Text style={styles.popupText}>Password</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.popupItem} onPress={() => setMenuVisible(false)}>
-                        <Ionicons name="moon-outline" size={16} color="#475569" style={styles.popupIcon} />
-                        <Text style={styles.popupText}>Dark Mode</Text>
-                    </TouchableOpacity>
-                    <View style={styles.popupDivider} />
-                    <TouchableOpacity style={styles.popupItem} onPress={() => { setMenuVisible(false); logout(); }}>
-                        <Ionicons name="log-out-outline" size={16} color="#EF4444" style={styles.popupIcon} />
-                        <Text style={[styles.popupText, { color: '#EF4444' }]}>Logout</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+            {/* User Menu removed */}
 
         </SafeAreaView>
     );

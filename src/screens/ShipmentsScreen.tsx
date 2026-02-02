@@ -57,9 +57,9 @@ const getStatusColor = (status: string) => {
 };
 
 const ShipmentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-    const { user, logout } = useAuthStore();
+    // Authentication store not used in header anymore
     const { theme } = useThemeStore();
-    const [menuVisible, setMenuVisible] = useState(false);
+    // Removed top-right user/logout and related popup
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
     const [isFilterExpanded, setIsFilterExpanded] = useState(false);
     const sections = groupData(MOCK_DATA);
@@ -155,29 +155,24 @@ const ShipmentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                             <Text style={[styles.headerTitle, { color: theme.headerText }]}>Shipments</Text>
                         </View>
 
-                        <View style={styles.headerRight}>
-                            <TouchableOpacity onPress={() => setIsSearchExpanded(true)} style={styles.iconButton}>
-                                <Ionicons name="search" size={20} color={theme.headerText} />
-                            </TouchableOpacity>
+                    <View style={styles.headerRight}>
+                        <TouchableOpacity onPress={() => setIsSearchExpanded(true)} style={styles.iconButton}>
+                            <Ionicons name="search" size={20} color={theme.headerText} />
+                        </TouchableOpacity>
 
-                            <TouchableOpacity style={[styles.createButtonIconSmall, { backgroundColor: theme.surface }]}>
-                                <Ionicons name="add" size={20} color={theme.primary} />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={styles.iconButton}
-                                onPress={() => setIsFilterExpanded(!isFilterExpanded)}
-                            >
-                                <Ionicons name={isFilterExpanded ? "filter" : "filter-outline"} size={20} color={theme.headerText} />
-                            </TouchableOpacity>
-
+                        <TouchableOpacity
+                            style={styles.iconButton}
+                            onPress={() => setIsFilterExpanded(!isFilterExpanded)}
+                        >
+                            <Ionicons name={isFilterExpanded ? "filter" : "filter-outline"} size={20} color={theme.headerText} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('GenericForm', { title: 'Shipment' })}
+                            style={styles.addButton}
+                        >
+                            <Ionicons name="add" size={24} color={theme.headerText} />
+                        </TouchableOpacity>
                             {/* User Avatar */}
-                            <TouchableOpacity
-                                style={[styles.headerAvatar, { backgroundColor: theme.surface }]}
-                                onPress={() => setMenuVisible(!menuVisible)}
-                            >
-                                <Text style={[styles.avatarInitial, { color: theme.primary }]}>{user?.name?.[0] || 'U'}</Text>
-                            </TouchableOpacity>
                         </View>
                     </>
                 ) : (
@@ -226,15 +221,7 @@ const ShipmentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 stickySectionHeadersEnabled={false}
             />
 
-            {/* User Menu Popup */}
-            {menuVisible && (
-                <View style={[styles.userMenuPopup, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-                    <TouchableOpacity style={styles.popupItem} onPress={() => { setMenuVisible(false); logout(); }}>
-                        <Ionicons name="log-out-outline" size={16} color={theme.error} style={{ marginRight: 8 }} />
-                        <Text style={{ color: theme.error, fontSize: 13 }}>Logout</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
+            
         </SafeAreaView>
     );
 };
@@ -276,6 +263,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
+    },
+    addButton: {
+        padding: 4,
     },
     iconButton: {
         padding: 4,
@@ -549,26 +539,7 @@ const styles = StyleSheet.create({
         bottom: 12,
     },
 
-    // User Menu
-    userMenuPopup: {
-        position: 'absolute',
-        top: 60,
-        right: 16,
-        width: 120,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 8,
-        padding: 8,
-        borderWidth: 1,
-        borderColor: '#E2E8F0',
-        zIndex: 100,
-        elevation: 10,
-    },
-    popupItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 8,
-    },
+    
 
     // Pagination
     paginationContainer: {
