@@ -54,12 +54,13 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             {/* Header */}
-            {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                    <Ionicons name="menu" size={24} color="#FFFFFF" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Dashboard</Text>
+                <View style={styles.headerLeftContainer}>
+                    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
+                        <Ionicons name="menu" size={24} color="#FFFFFF" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Dashboard</Text>
+                </View>
                 <View style={styles.headerRight}>
                     <TouchableOpacity style={styles.iconButton}>
                         <Ionicons name="search" size={20} color="#FFFFFF" />
@@ -194,8 +195,12 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         shadowOffset: { width: 0, height: 2 },
     },
+    headerLeftContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     menuButton: {
-        padding: 4,
+        marginRight: 12,
     },
     headerTitle: {
         fontSize: 18,
