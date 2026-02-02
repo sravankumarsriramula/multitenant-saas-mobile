@@ -38,7 +38,7 @@ const InvoiceDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ navig
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
             <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                <TouchableOpacity onPress={() => navigation.navigate('Invoices')} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={theme.text} />
                 </TouchableOpacity>
 
