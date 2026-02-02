@@ -15,6 +15,12 @@ import HomeScreen from '../screens/HomeScreen';
 import UsersScreen from '../screens/UsersScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ShipmentsScreen from '../screens/ShipmentsScreen';
+import OrdersScreen from '../screens/OrdersScreen';
+import QuotationsScreen from '../screens/QuotationsScreen';
+import InvoicesScreen from '../screens/InvoicesScreen';
+import PaymentsScreen from '../screens/PaymentsScreen';
+import PurchaseOrdersScreen from '../screens/PurchaseOrdersScreen';
+import QuotationDetailsScreen from '../screens/QuotationDetailsScreen';
 import Loading from '../components/Loading';
 
 const Stack = createNativeStackNavigator();
@@ -114,6 +120,51 @@ const BottomTabNavigator = () => {
                     tabBarLabel: 'Users'
                 }}
             />
+            <Tab.Screen
+                name="Orders"
+                component={OrdersScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Orders'
+                }}
+            />
+            <Tab.Screen
+                name="Quotations"
+                component={QuotationsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Quotations'
+                }}
+            />
+            <Tab.Screen
+                name="Invoices"
+                component={InvoicesScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Invoices'
+                }}
+            />
+            <Tab.Screen
+                name="Payments"
+                component={PaymentsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Payments'
+                }}
+            />
+            <Tab.Screen
+                name="PurchaseOrders"
+                component={PurchaseOrdersScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Purchase Orders'
+                }}
+            />
         </Tab.Navigator>
     );
 };
@@ -129,17 +180,17 @@ const CustomDrawerContent = (props: any) => {
             items: [
                 { label: 'Dashboard', icon: 'view-dashboard-outline', screen: 'TabHome' },
                 { label: 'Shipments', icon: 'ferry', screen: 'Shipments' },
-                { label: 'Quotations', icon: 'file-document-edit-outline', screen: 'TabHome' },
-                { label: 'Orders', icon: 'clipboard-list-outline', screen: 'TabHome' },
+                { label: 'Quotations', icon: 'file-document-edit-outline', screen: 'Quotations' },
+                { label: 'Orders', icon: 'clipboard-list-outline', screen: 'Orders' },
                 { label: 'Inventory', icon: 'warehouse', screen: 'TabHome' },
             ]
         },
         {
             title: 'FINANCE',
             items: [
-                { label: 'Invoices', icon: 'receipt', screen: 'TabHome' },
-                { label: 'Payments', icon: 'credit-card-outline', screen: 'TabHome' },
-                { label: 'Purchase Orders', icon: 'file-sign', screen: 'TabHome' },
+                { label: 'Invoices', icon: 'receipt', screen: 'Invoices' },
+                { label: 'Payments', icon: 'credit-card-outline', screen: 'Payments' },
+                { label: 'Purchase Orders', icon: 'file-sign', screen: 'PurchaseOrders' },
             ]
         },
         {
@@ -252,6 +303,7 @@ const AppNavigator: React.FC = () => {
                 ) : (
                     <Stack.Screen name="App" component={MainDrawerNavigator} />
                 )}
+                <Stack.Screen name="QuotationDetails" component={QuotationDetailsScreen} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );
