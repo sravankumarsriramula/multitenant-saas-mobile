@@ -99,9 +99,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
                 <View style={styles.headerRight}>
                     <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="search" size={20} color={theme.headerText} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton}>
                         <Ionicons name="notifications-outline" size={20} color={theme.headerText} />
                     </TouchableOpacity>
 
