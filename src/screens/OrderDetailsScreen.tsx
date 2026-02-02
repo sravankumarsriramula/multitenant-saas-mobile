@@ -278,13 +278,7 @@ const OrderDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ navigat
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 12,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-    },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingTop: Platform.OS === 'android' ? 40 : 12, paddingBottom: 12, borderBottomWidth: 1 },
     backButton: { marginRight: 8 },
     headerTitleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     headerTitle: { fontSize: 16, fontWeight: '700' },

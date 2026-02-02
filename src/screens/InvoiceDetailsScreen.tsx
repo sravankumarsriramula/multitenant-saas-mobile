@@ -6,6 +6,7 @@ import {
     SafeAreaView,
     ScrollView,
     TouchableOpacity,
+    Platform,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeStore } from '../store/themeStore';
@@ -247,7 +248,7 @@ const InvoiceDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ navig
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 12, borderBottomWidth: 1 },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingTop: Platform.OS === 'android' ? 40 : 12, paddingBottom: 12, borderBottomWidth: 1 },
     backButton: { marginRight: 8 },
     headerTitleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     headerTitle: { fontSize: 16, fontWeight: '700' },
