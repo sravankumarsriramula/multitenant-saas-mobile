@@ -54,17 +54,18 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             {/* Header */}
+            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                    <Ionicons name="menu" size={24} color="#334155" />
+                    <Ionicons name="menu" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Dashboard</Text>
                 <View style={styles.headerRight}>
                     <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="search" size={20} color="#64748B" />
+                        <Ionicons name="search" size={20} color="#FFFFFF" />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="notifications-outline" size={20} color="#64748B" />
+                        <Ionicons name="notifications-outline" size={20} color="#FFFFFF" />
                     </TouchableOpacity>
 
                     {/* User Avatar */}
@@ -184,18 +185,22 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingTop: Platform.OS === 'android' ? 40 : 12,
-        paddingBottom: 12,
-        backgroundColor: '#FFFFFF',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E2E8F0',
+        paddingBottom: 16,
+        backgroundColor: '#1E3A8A', // Deep Blue
+        borderBottomWidth: 0,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
     },
     menuButton: {
         padding: 4,
     },
     headerTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '700',
-        color: '#0F172A',
+        color: '#FFFFFF',
     },
     headerRight: {
         flexDirection: 'row',
@@ -209,7 +214,7 @@ const styles = StyleSheet.create({
         width: 28,
         height: 28,
         borderRadius: 14,
-        backgroundColor: '#2563EB',
+        backgroundColor: '#FFFFFF',
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: 4,
@@ -220,7 +225,7 @@ const styles = StyleSheet.create({
     avatarInitial: {
         fontSize: 12,
         fontWeight: '700',
-        color: '#FFFFFF',
+        color: '#1E3A8A',
     },
     userMenuPopup: {
         position: 'absolute',

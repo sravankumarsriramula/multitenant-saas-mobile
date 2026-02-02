@@ -66,55 +66,49 @@ const ShipmentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         const { bg, text } = getStatusColor(item.status);
         return (
             <TouchableOpacity style={styles.card} activeOpacity={0.7}>
-                {/* Top Row: Check/Icon + ID + Status */}
+                {/* Top Row: Check/Icon + Company/ID + Status */}
                 <View style={styles.cardHeader}>
                     <View style={styles.headerLeft}>
-                        <TouchableOpacity style={styles.checkbox}>
-                            {/* Unchecked state for demo */}
-                        </TouchableOpacity>
+                        {/* Checkbox & Icon */}
+                        <TouchableOpacity style={styles.checkbox} />
                         <View style={styles.shipmentIconBox}>
                             <MaterialCommunityIcons name="ferry" size={18} color="#0EA5E9" />
                         </View>
-                        <View>
+
+                        {/* Main Content: ID Top, Company + Product Below */}
+                        <View style={styles.headerTextContainer}>
                             <Text style={styles.shipmentId}>{item.id}</Text>
-                            <Text style={styles.productText}>{item.product}</Text>
+                            <Text style={styles.companyRow} numberOfLines={1}>
+                                <Text style={styles.companyName}>{item.receiverCompany}</Text>
+                                <Text style={styles.separator}> • </Text>
+                                <Text style={styles.productText}>{item.product}</Text>
+                            </Text>
                         </View>
                     </View>
 
-                    {/* Status Badge (Desktop right side, Mobile top right) */}
+                    {/* Status Badge */}
                     <View style={[styles.statusBadge, { backgroundColor: bg }]}>
                         <Text style={[styles.statusText, { color: text }]}>{item.status}</Text>
                     </View>
                 </View>
 
-                {/* Middle Info Block */}
-                <View style={styles.infoContainer}>
-                    {/* Receiver */}
-                    <View style={styles.infoRow}>
-                        <View style={styles.avatarMini}>
-                            <Text style={styles.avatarMiniText}>{item.receiver}</Text>
-                        </View>
-                        <Text style={styles.infoTextMain}>{item.receiverCompany}</Text>
+                {/* Details Row (Compact) */}
+                <View style={styles.detailsRow}>
+                    <View style={styles.detailItem}>
+                        <Text style={styles.detailLabel}>Country</Text>
+                        <Text style={styles.detailValue}>{item.country}</Text>
                     </View>
-
-                    {/* Country & Agent */}
-                    <View style={styles.detailsRow}>
-                        <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>Country</Text>
-                            <Text style={styles.detailValue}>{item.country}</Text>
-                        </View>
-                        <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>Agent</Text>
-                            <Text style={styles.detailValue}>{item.agent}</Text>
-                        </View>
-                        <View style={styles.detailItem}>
-                            <Text style={styles.detailLabel}>Est. Value</Text>
-                            <Text style={styles.detailValue}>{item.value}</Text>
-                        </View>
+                    <View style={styles.detailItem}>
+                        <Text style={styles.detailLabel}>Agent</Text>
+                        <Text style={styles.detailValue}>{item.agent}</Text>
+                    </View>
+                    <View style={styles.detailItem}>
+                        <Text style={styles.detailLabel}>Est. Value</Text>
+                        <Text style={styles.detailValue}>{item.value}</Text>
                     </View>
                 </View>
 
-                {/* Chevron for mobile affordance */}
+                {/* Chevron for mobile affordance (Optional, maybe remove to save width/clutter?) */}
                 <View style={styles.cardAction}>
                     <MaterialCommunityIcons name="chevron-right" size={20} color="#CBD5E1" />
                 </View>
@@ -144,32 +138,31 @@ const ShipmentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header: Title + User */}
             {/* Header: Title + User + Actions */}
             <View style={styles.header}>
                 {!isSearchExpanded ? (
                     <>
                         <View style={styles.headerLeftContainer}>
                             <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                                <Ionicons name="menu" size={24} color="#334155" />
+                                <Ionicons name="menu" size={24} color="#FFFFFF" />
                             </TouchableOpacity>
                             <Text style={styles.headerTitle}>Shipments</Text>
                         </View>
 
                         <View style={styles.headerRight}>
                             <TouchableOpacity onPress={() => setIsSearchExpanded(true)} style={styles.iconButton}>
-                                <Ionicons name="search" size={20} color="#64748B" />
+                                <Ionicons name="search" size={20} color="#FFFFFF" />
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.createButtonIconSmall}>
-                                <Ionicons name="add" size={20} color="#FFFFFF" />
+                                <Ionicons name="add" size={20} color="#1E3A8A" />
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={styles.iconButton}
                                 onPress={() => setIsFilterExpanded(!isFilterExpanded)}
                             >
-                                <Ionicons name={isFilterExpanded ? "filter" : "filter-outline"} size={20} color="#64748B" />
+                                <Ionicons name={isFilterExpanded ? "filter" : "filter-outline"} size={20} color="#FFFFFF" />
                             </TouchableOpacity>
 
                             {/* User Avatar */}
@@ -183,7 +176,7 @@ const ShipmentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     </>
                 ) : (
                     <View style={styles.searchBarHeader}>
-                        <Ionicons name="search" size={20} color="#94A3B8" />
+                        <Ionicons name="search" size={20} color="#64748B" />
                         <TextInput
                             placeholder="Search by Shipment Number"
                             style={styles.searchInputHeader}
@@ -252,10 +245,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingTop: Platform.OS === 'android' ? 40 : 12,
-        paddingBottom: 12,
-        backgroundColor: '#FFFFFF',
-        borderBottomWidth: 1,
-        borderBottomColor: '#F1F5F9',
+        paddingBottom: 16,
+        backgroundColor: '#1E3A8A', // Deep Blue
+        borderBottomWidth: 0,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
     },
     headerLeftContainer: {
         flexDirection: 'row',
@@ -267,7 +264,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#0F172A',
+        color: '#FFFFFF',
     },
     headerRight: {
         flexDirection: 'row',
@@ -281,12 +278,12 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 16,
-        backgroundColor: '#2563EB',
+        backgroundColor: '#FFFFFF',
         alignItems: 'center',
         justifyContent: 'center',
     },
     avatarInitial: {
-        color: '#FFF',
+        color: '#1E3A8A',
         fontWeight: 'bold',
     },
 
@@ -357,9 +354,9 @@ const styles = StyleSheet.create({
 
     // Actions
     createButtonIconSmall: {
-        backgroundColor: '#1E293B',
+        backgroundColor: '#FFFFFF',
         width: 32,
-        height: 32, // Smaller than before
+        height: 32,
         borderRadius: 8,
         alignItems: 'center',
         justifyContent: 'center',
@@ -370,7 +367,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#F1F5F9',
+        backgroundColor: '#FFFFFF',
         borderRadius: 8,
         paddingHorizontal: 8,
         height: 36,
@@ -384,7 +381,7 @@ const styles = StyleSheet.create({
     },
     cancelText: {
         fontSize: 13,
-        color: '#2563EB',
+        color: '#FFFFFF',
         fontWeight: '600',
         marginLeft: 8,
     },
@@ -435,8 +432,8 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#FFFFFF',
         borderRadius: 8,
-        padding: 12,
-        marginBottom: 12,
+        padding: 8, // Reduced from 10
+        marginBottom: 8,
         borderWidth: 1,
         borderColor: '#F1F5F9',
         ...Platform.select({
@@ -447,11 +444,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
-        marginBottom: 12,
+        marginBottom: 0, // No margin
     },
     headerLeft: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 8, // Reduced gap
         flex: 1,
     },
     checkbox: {
@@ -470,21 +467,39 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    headerTextContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
     shipmentId: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '700',
         color: '#2563EB',
-        marginBottom: 2,
+        marginBottom: 0, // No margin
+    },
+    companyRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    companyName: {
+        fontSize: 11, // Reduced from 12
+        fontWeight: '700',
+        color: '#1E293B',
     },
     productText: {
-        fontSize: 11,
+        fontSize: 10, // Reduced from 11
         color: '#64748B',
+        fontWeight: '400',
+    },
+    separator: {
+        color: '#CBD5E1',
+        fontSize: 10,
     },
     statusBadge: {
-        paddingHorizontal: 8,
-        paddingVertical: 4,
+        paddingHorizontal: 6,
+        paddingVertical: 2, // Compact badge
         borderRadius: 4,
-        minWidth: 70,
+        minWidth: 60,
         alignItems: 'center',
     },
     statusText: {
@@ -492,35 +507,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
 
-    // Middle Info
+    // Middle Info (Removed/Hidden)
     infoContainer: {
-        marginTop: 4,
-        paddingLeft: 36, // Create alignment with ID text
+        // Removed padding/margin here as it's no longer used for the middle row
     },
-    infoRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 12,
-        gap: 8
-    },
-    avatarMini: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: '#E2E8F0',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    avatarMiniText: {
-        fontSize: 10,
-        fontWeight: '600',
-        color: '#475569',
-    },
-    infoTextMain: {
-        fontSize: 13,
-        color: '#334155',
-        fontWeight: '500',
-    },
+    // infoRow, avatarMini, etc removed or unused
 
     // Details
     detailsRow: {
@@ -528,18 +519,20 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         borderTopWidth: 1,
         borderTopColor: '#F8FAFC',
-        paddingTop: 12,
+        paddingTop: 4, // Minimal padding
+        marginTop: 0, // No margin
+        paddingLeft: 38,
     },
     detailItem: {
         flex: 1,
     },
     detailLabel: {
-        fontSize: 10,
+        fontSize: 9, // Smaller Label
         color: '#94A3B8',
-        marginBottom: 2,
+        marginBottom: 0,
     },
     detailValue: {
-        fontSize: 11,
+        fontSize: 10, // Smaller Value
         fontWeight: '600',
         color: '#334155',
     },

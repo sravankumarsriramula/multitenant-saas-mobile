@@ -42,7 +42,7 @@ const BottomTabNavigator = () => {
                 tabBarShowLabel: true,
                 tabBarLabelPosition: 'below-icon', // Force label below icon
                 tabBarLabelStyle: styles.tabBarLabel,
-                tabBarActiveTintColor: '#2563EB',
+                tabBarActiveTintColor: '#1E3A8A', // Deep Blue
                 tabBarInactiveTintColor: '#94A3B8',
                 // Ensure visible items split space evenly but don't force centering which might clip text
                 tabBarItemStyle: {
@@ -54,19 +54,19 @@ const BottomTabNavigator = () => {
                 name="TabHome"
                 component={HomeScreen}
                 options={{
-                    tabBarLabel: 'Home',
+                    tabBarLabel: 'Dashboard',
                     tabBarIcon: ({ color, focused }) => (
-                        <Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
+                        <MaterialCommunityIcons name={focused ? "view-dashboard" : "view-dashboard-outline"} size={24} color={color} />
                     ),
                 }}
             />
             <Tab.Screen
-                name="TabSearch"
-                component={HomeScreen}
+                name="Shipments"
+                component={ShipmentsScreen}
                 options={{
-                    tabBarLabel: 'Search',
+                    tabBarLabel: 'Shipments',
                     tabBarIcon: ({ color, focused }) => (
-                        <Ionicons name={focused ? "search" : "search-outline"} size={24} color={color} />
+                        <MaterialCommunityIcons name="truck-delivery" size={24} color={color} />
                     ),
                 }}
             />
@@ -95,13 +95,14 @@ const BottomTabNavigator = () => {
             />
 
             {/* Hidden Tabs (Moved to end to prevent layout gaps) */}
+            {/* Hidden Tabs (Moved to end to prevent layout gaps) */}
             <Tab.Screen
-                name="Shipments"
-                component={ShipmentsScreen}
+                name="TabSearch"
+                component={HomeScreen}
                 options={{
                     tabBarButton: () => null,
-                    tabBarItemStyle: { display: 'none' }, // Double ensure no space is taken
-                    tabBarLabel: 'Shipments'
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Search'
                 }}
             />
             <Tab.Screen
@@ -265,16 +266,16 @@ const styles = StyleSheet.create({
     brandHeader: {
         padding: 16,
         paddingTop: 50,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#1E3A8A', // Deep Blue
         borderBottomWidth: 1,
-        borderBottomColor: '#CBD5E1',
+        borderBottomColor: '#1E3A8A',
         flexDirection: 'row',
         alignItems: 'center',
     },
     brandTitle: {
         fontSize: 16,
         fontWeight: '800',
-        color: '#0F172A',
+        color: '#FFFFFF',
         letterSpacing: 0.5,
     },
 

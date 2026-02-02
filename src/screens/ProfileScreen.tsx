@@ -5,12 +5,14 @@ import {
     StyleSheet,
     SafeAreaView,
     ScrollView,
+    TouchableOpacity,
     Platform,
 } from 'react-native';
 import { useAuthStore } from '../store/authStore';
+import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
 
-const ProfileScreen: React.FC = () => {
+const ProfileScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { user, logout } = useAuthStore();
 
     const handleLogout = async () => {
@@ -27,8 +29,17 @@ const ProfileScreen: React.FC = () => {
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* Standard Header */}
+            <View style={styles.topHeader}>
+                <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
+                    <Ionicons name="menu" size={24} color="#FFFFFF" />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Profile</Text>
+                <View style={{ width: 40 }} />
+            </View>
+
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.header}>
+                <View style={styles.profileCard}>
                     <View style={styles.avatar}>
                         <Text style={styles.avatarText}>
                             {user?.name?.charAt(0).toUpperCase() || 'U'}
@@ -83,7 +94,30 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingBottom: 40,
     },
-    header: {
+    topHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingTop: Platform.OS === 'android' ? 40 : 12,
+        paddingBottom: 16,
+        backgroundColor: '#1E3A8A', // Deep Blue
+        borderBottomWidth: 0,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+    },
+    menuButton: {
+        padding: 4,
+    },
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
+    profileCard: {
         alignItems: 'center',
         marginBottom: 32,
         paddingVertical: 24,

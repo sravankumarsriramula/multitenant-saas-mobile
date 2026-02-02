@@ -96,7 +96,7 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                        <Ionicons name="menu" size={24} color="#334155" />
+                        <Ionicons name="menu" size={24} color="#FFFFFF" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Users</Text>
                     <View style={{ width: 40 }} />
@@ -113,11 +113,11 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                    <Ionicons name="menu" size={24} color="#334155" />
+                    <Ionicons name="menu" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Users</Text>
                 <TouchableOpacity style={styles.addButton}>
-                    <Ionicons name="add-circle-outline" size={24} color="#007AFF" />
+                    <Ionicons name="add-circle-outline" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
             </View>
 
@@ -172,18 +172,22 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingTop: Platform.OS === 'android' ? 40 : 12,
-        paddingBottom: 12,
-        backgroundColor: '#FFFFFF',
-        borderBottomWidth: 1,
-        borderBottomColor: '#E2E8F0',
+        paddingBottom: 16,
+        backgroundColor: '#1E3A8A', // Deep Blue
+        borderBottomWidth: 0,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
     },
     menuButton: {
         padding: 4,
     },
     headerTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '700',
-        color: '#0F172A',
+        color: '#FFFFFF',
     },
     addButton: {
         padding: 4,
