@@ -5,44 +5,55 @@ import {
     StyleSheet,
     SafeAreaView,
     TouchableOpacity,
-    Platform,
     FlatList,
     Dimensions,
+    Platform
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../store/themeStore';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
-// Calculate item width for 2 columns with padding
-const GAP = 12;
-const PADDING = 16;
-const ITEM_WIDTH = (width - (PADDING * 2) - GAP) / 2;
+
+// Ultra-Compact 3-Column Layout Calculations
+const GAP = 8;
+const PADDING = 12;
+// ((Screen Width - (LeftPad + RightPad) - (Gap * 2)) / 3)
+const ITEM_WIDTH = (width - (PADDING * 2) - (GAP * 2)) / 3;
 
 const ReportsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { theme } = useThemeStore();
 
     const reportItems = [
-        { label: 'Quotations', screen: 'Quotations' },
-        { label: 'Orders', screen: 'Orders' },
-        { label: 'Sales Order Report', screen: null },
-        { label: 'Sales Invoice Report', screen: null },
-        { label: 'Payments', screen: 'Payments' },
-        { label: 'Invoice Payments Due', screen: null },
-        { label: 'Product Sales', screen: null },
-        { label: 'Inventory', screen: null },
-        { label: 'Shipments', screen: 'Shipments' },
-        { label: 'Client Status Report', screen: null },
-        { label: 'Export Register', screen: null },
-        { label: 'Insurance Report', screen: null },
-        { label: 'Forex Gain/Loss Report', screen: null },
-        { label: 'Forex Gain/Loss Report(Grouped)', screen: null },
-        { label: 'Duty Drawback Report', screen: null },
-        { label: 'RoDTEP Report', screen: null },
-        { label: 'eBRC Status', screen: null },
+        // Sales (Blue)
+        { label: 'Quotations', icon: 'file-document-edit', color: '#2563EB', group: 'Sales' },
+        { label: 'Orders', icon: 'clipboard-list', color: '#2563EB', group: 'Sales' },
+        { label: 'Sales Order Report', icon: 'file-chart', color: '#2563EB', group: 'Sales' },
+        { label: 'Sales Invoice Report', icon: 'receipt', color: '#2563EB', group: 'Sales' },
+        { label: 'Client Status Report', icon: 'account-clock', color: '#2563EB', group: 'Sales' },
+
+        // Finance (Amber)
+        { label: 'Payments', icon: 'cash-multiple', color: '#F59E0B', group: 'Finance' },
+        { label: 'Invoice Payments Due', icon: 'clock-alert', color: '#F59E0B', group: 'Finance' },
+        { label: 'Forex Gain/Loss Report', icon: 'currency-usd', color: '#F59E0B', group: 'Finance' },
+        { label: 'Forex Gain/Loss Report(Grouped)', icon: 'currency-usd-off', color: '#F59E0B', group: 'Finance' },
+
+        // Inventory/Product (Green)
+        { label: 'Product Sales', icon: 'package-variant', color: '#059669', group: 'Inventory' },
+        { label: 'Inventory', icon: 'warehouse', color: '#059669', group: 'Inventory' },
+
+        // Logistics (Cyan)
+        { label: 'Shipments', icon: 'truck-delivery', color: '#06B6D4', group: 'Logistics' },
+        { label: 'Export Register', icon: 'book-open-page-variant', color: '#06B6D4', group: 'Logistics' },
+        { label: 'Insurance Report', icon: 'shield-check', color: '#06B6D4', group: 'Logistics' },
+        { label: 'eBRC Status', icon: 'bank-check', color: '#06B6D4', group: 'Logistics' },
+
+        // Tax/Gov (Violet)
+        { label: 'Duty Drawback Report', icon: 'hand-coin', color: '#7C3AED', group: 'Tax' },
+        { label: 'RoDTEP Report', icon: 'percent', color: '#7C3AED', group: 'Tax' },
     ];
 
     const handlePress = (item: any) => {
-        // Navigate to the generic report grid view for all items as per requirements
+        // Corrected navigation to 'ReportView' to restore functionality
         navigation.navigate('ReportView', { reportTitle: item.label });
     };
 
@@ -52,28 +63,42 @@ const ReportsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             onPress={() => handlePress(item)}
             activeOpacity={0.7}
         >
-            <Text style={styles.cardText}>{item.label}</Text>
+            <View style={[styles.iconContainer, { backgroundColor: `${item.color}15` }]}>
+                <MaterialCommunityIcons name={item.icon as any} size={20} color={item.color} />
+            </View>
+            <Text style={styles.cardText} numberOfLines={2}>{item.label}</Text>
         </TouchableOpacity>
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: '#F1F5F9' }]}>
             {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                    <Ionicons name="menu" size={24} color="#FFFFFF" />
+                <View style={styles.headerLeft}>
+                    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
+                        <Ionicons name="menu" size={24} color="#FFF" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Reports</Text>
+                </View>
+                <TouchableOpacity>
+                    <Ionicons name="filter" size={20} color="#FFF" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Reports</Text>
             </View>
 
             <FlatList
                 data={reportItems}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.label}
-                numColumns={2}
+                numColumns={3}
                 contentContainerStyle={styles.listContainer}
                 columnWrapperStyle={{ gap: GAP }}
                 showsVerticalScrollIndicator={false}
+                ListHeaderComponent={() => (
+                    <View style={styles.listHeader}>
+                        <Text style={styles.listHeaderTitle}>All Reports</Text>
+                        <Text style={styles.listHeaderSubtitle}>View and export detailed insights</Text>
+                    </View>
+                )}
             />
         </SafeAreaView>
     );
@@ -82,20 +107,25 @@ const ReportsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F1F5F9', // Light background like the image seems to imply or standard dashboard gray
+        backgroundColor: '#F1F5F9',
     },
     header: {
+        backgroundColor: '#1E3A8A',
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingTop: Platform.OS === 'android' ? 40 : 12,
         paddingBottom: 16,
-        backgroundColor: '#1E3A8A', // Deep Blue to match app header
         elevation: 4,
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+    },
+    headerLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     menuButton: {
         marginRight: 16,
@@ -107,33 +137,56 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         padding: PADDING,
+        paddingBottom: 40,
         gap: GAP,
     },
+    listHeader: {
+        marginBottom: 12,
+        marginTop: 4,
+    },
+    listHeaderTitle: {
+        fontSize: 18,
+        fontWeight: '800',
+        color: '#0F172A',
+        marginBottom: 2,
+    },
+    listHeaderSubtitle: {
+        fontSize: 12,
+        color: '#64748B',
+    },
+    // Ultra Compact Card (Same as AdminScreen)
     card: {
-        backgroundColor: '#FFFFFF',
         width: ITEM_WIDTH,
-        minHeight: 80, // Ensure enough touch target and visual substance
-        padding: 16,
-        borderRadius: 8,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        paddingHorizontal: 4,
+        paddingVertical: 12,
+        flexDirection: 'column',
+        alignItems: 'center',
         justifyContent: 'center',
-        // Shadow for "card" look
-        ...Platform.select({
-            android: { elevation: 2 },
-            default: {
-                shadowColor: '#000',
-                shadowOpacity: 0.05,
-                shadowRadius: 3,
-                shadowOffset: { width: 0, height: 2 }
-            }
-        }),
         borderWidth: 1,
         borderColor: '#E2E8F0',
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    iconContainer: {
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 6,
     },
     cardText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#334155', // Slate-700
-    },
+        fontSize: 10,
+        fontWeight: '700',
+        color: '#334155',
+        textAlign: 'center',
+        lineHeight: 12,
+    }
 });
 
 export default ReportsScreen;

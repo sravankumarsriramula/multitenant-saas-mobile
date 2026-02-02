@@ -6,16 +6,12 @@ import {
     SafeAreaView,
     FlatList,
     TouchableOpacity,
-    Alert,
     RefreshControl,
     Platform,
     ActivityIndicator,
     TextInput
 } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import axios from 'axios';
-import { API_BASE_URL } from '../constants/config';
-import { useAuthStore } from '../store/authStore';
+import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../store/themeStore';
 
 interface Role {
@@ -30,7 +26,6 @@ interface Role {
 
 const RolesScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { theme } = useThemeStore();
-    const { token } = useAuthStore();
 
     // State
     const [roles, setRoles] = useState<Role[]>([]);
@@ -94,10 +89,6 @@ const RolesScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     };
 
     const handleCreateRole = () => {
-        // Navigate to Create Screen (or use GenericForm with special param)
-        // Reusing GenericForm logic for now, or we can make a new one.
-        // Given GenericForm already has "Roles" logic, we can leverage it or replace it.
-        // Let's pass 'Roles' title but we might need to handle the detail view better.
         navigation.navigate('GenericForm', { title: 'Roles', mode: 'create', viewMode: 'detail' });
     };
 
@@ -299,42 +290,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
-    },
-    statsBar: {
-        flexDirection: 'row',
-        paddingVertical: 12,
-        paddingHorizontal: 8,
-        borderTopWidth: 1,
-        borderTopColor: '#F1F5F9', // Fallback
-        marginTop: 0,
-    },
-    statItem: {
-        alignItems: 'center',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        flex: 1, // Center it as sole item
-    },
-    statValue: {
-        fontSize: 18,
-        fontWeight: '700',
-    },
-    statLabel: {
-        fontSize: 11,
-        fontWeight: '500',
-    },
-    iconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: '#E0F2FE',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 12,
-    },
-    iconText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#0284C7',
     },
     headerInfo: {
         flex: 1,

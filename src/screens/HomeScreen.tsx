@@ -9,211 +9,304 @@ import {
     Dimensions,
     Platform,
 } from 'react-native';
-import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
-import { BarChart } from 'react-native-chart-kit';
+import { BarChart, PieChart } from 'react-native-gifted-charts';
 
 const { width } = Dimensions.get('window');
 const screenWidth = width;
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { theme } = useThemeStore();
-    // Removed user/logout menu state
 
-    // --- CHART CONFIG ---
-    const chartConfig = {
-        backgroundGradientFrom: '#FFFFFF',
-        backgroundGradientTo: '#FFFFFF',
-        color: (opacity = 1) => `rgba(29, 78, 216, ${opacity})`, // Blue-700
-        strokeWidth: 2,
-        barPercentage: 0.7,
-        decimalPlaces: 0,
-        propsForLabels: {
-            fontSize: 10,
-            fill: '#64748B',
-        },
-        propsForBackgroundLines: {
-            strokeDasharray: '', // solid lines
-            stroke: '#E2E8F0',
-        },
+    // --- CHART CONFIG & MOCK DATA ---
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Explicitly formatting data
+    const formatData = (values: number[], color: string) => {
+        return values.map((val, index) => ({
+            value: val,
+            label: months[index],
+            frontColor: color,
+            spacing: 16, // Fixed spacing from previous working version
+            labelTextStyle: { color: '#94A3B8', fontSize: 10 },
+        }));
     };
 
-    // --- MOCK DATA ---
+    const salesValues = [12, 19, 15, 22, 28, 25, 35, 30, 42, 38, 45, 52];
+    const salesData = formatData(salesValues, '#2563EB');
+
+    const profitValues = [4, 7, 5, 8, 10, 8, 12, 11, 15, 13, 16, 19];
+    const profitData = formatData(profitValues, '#059669');
+
+    const receiptsValues = [10, 15, 14, 20, 25, 23, 30, 28, 35, 33, 40, 48];
+    const receiptsData = formatData(receiptsValues, '#7C3AED');
+
+    const agingPieData = [
+        { value: 450, color: '#10B981', text: '54%', label: '0-30 Days' },
+        { value: 120, color: '#F59E0B', text: '30%', label: '31-60 Days' },
+        { value: 80, color: '#F97316', text: '20%', label: '61-90 Days' },
+        { value: 40, color: '#EF4444', text: '16%', label: '90+ Days' },
+    ];
+
+    const agingBarData = [
+        { value: 450, label: '0-30', frontColor: '#10B981' },
+        { value: 120, label: '31-60', frontColor: '#F59E0B' },
+        { value: 80, label: '61-90', frontColor: '#F97316' },
+        { value: 40, label: '90+', frontColor: '#EF4444' },
+    ];
+
+    const topProducts = [
+        { value: 40, text: '12.5L', color: '#2563EB', label: 'Headset' },
+        { value: 25, text: '8.2L', color: '#059669', label: 'Chair' },
+        { value: 15, text: '5.4L', color: '#7C3AED', label: 'Stand' },
+        { value: 12, text: '3.1L', color: '#F59E0B', label: 'KB' },
+        { value: 8, text: '2.8L', color: '#DC2626', label: 'Hub' },
+    ];
+
+    // --- STATS ---
     const salesStats = [
         { label: 'Shipment Value (INR)', value: '₹26,81,16,791', isPrimary: true },
-        { label: 'Total Orders', value: '21', isPrimary: false },
-        { label: 'Total Shipments', value: '20', isPrimary: false },
-        { label: 'Order Value', value: '₹26,94,76,404', isPrimary: false },
+        { label: 'Orders', value: '254', isPrimary: false },
+        { label: 'Shipments', value: '240', isPrimary: false },
+        { label: 'Order Value', value: '₹26.9 L', isPrimary: false },
     ];
-    const salesChartData = {
-        labels: ['Jan', 'Feb'],
-        datasets: [{ data: [10, 400] }], // Visual approximation: Jan low, Feb high
-    };
 
     const profitStats = [
-        { label: '(Sales - Purchases)', value: '₹26,78,74,791', isPrimary: true },
-        { label: 'Purchase Orders', value: '12', isPrimary: false },
-        { label: 'PO Value', value: '₹5,56,87,106', isPrimary: false },
+        { label: 'Net Profit', value: '₹8,78,74,791', isPrimary: true },
+        { label: 'PO Count', value: '142', isPrimary: false },
+        { label: 'Margin', value: '32%', isPrimary: false },
     ];
-    const profitChartData = {
-        labels: ['Jan', 'Feb'],
-        datasets: [{ data: [15, 450] }], // Visual approximation
-    };
 
     const receiptsStats = [
-        { label: 'Receipt Value (INR)', value: '₹4,50,000', isPrimary: true },
-        { label: 'Total Invoices', value: '20', isPrimary: false },
-        { label: 'Total Receipts', value: '1', isPrimary: false },
-        { label: 'Payment Due', value: '₹26,36,74,046', isPrimary: false },
-        { label: 'Payment Past Due', value: '₹26,36,74,046', isPrimary: false },
+        { label: 'Payment Receipts', value: '₹24,50,000', isPrimary: true },
+        { label: 'Invoices', value: '210', isPrimary: false },
+        { label: 'Receipts', value: '185', isPrimary: false },
+        { label: 'Outstand.', value: '₹2.6 Cr', isPrimary: false },
     ];
-    const receiptsChartData = {
-        labels: ['Jan', 'Feb'],
-        datasets: [{ data: [0, 400] }], // Jan is 0 based on image
+
+    // Tooltip Component
+    const renderTooltip = (item: any) => {
+        return (
+            <View style={{
+                marginBottom: 20,
+                padding: 6,
+                backgroundColor: '#1E293B',
+                borderRadius: 4,
+            }}>
+                <Text style={{ color: '#fff', fontSize: 12 }}>{item.value}</Text>
+            </View>
+        );
     };
 
-    const agingChartData = {
-        labels: ['0-30', '31-60', '61-90', '90+'],
-        datasets: [{ data: [400, 0, 0, 0] }], // Only 0-30 has data
-    };
+    const MetricCard = ({
+        title,
+        icon,
+        color,
+        stats,
+        chartData,
+        chartType = 'bar'
+    }: {
+        title: string,
+        icon: any,
+        color: string,
+        stats: any[],
+        chartData?: any,
+        chartType?: 'bar' | 'pie'
+    }) => {
+        const primaryStat = stats.find(s => s.isPrimary);
+        const secondaryStats = stats.filter(s => !s.isPrimary);
 
-
-    const renderStatRow = (label: string, value: string, isPrimary: boolean, index: number) => (
-        <View key={index} style={styles.statRow}>
-            <Text style={styles.statLabel}>{label}</Text>
-            <Text style={[styles.statValue, isPrimary && styles.statValuePrimary]}>{value}</Text>
-        </View>
-    );
-
-    return (
-        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-            {/* Header */}
-            <View style={[styles.header, { backgroundColor: theme.headerBackground }]}>
-                <View style={styles.headerLeftContainer}>
-                    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                        <Ionicons name="menu" size={24} color={theme.headerText} />
-                    </TouchableOpacity>
-                    <Text style={[styles.headerTitle, { color: theme.headerText }]}>Dashboard</Text>
+        return (
+            <View style={styles.card}>
+                {/* Headerless Design - Restored to clean look */}
+                <View style={[styles.mainBlockRow, !primaryStat && styles.mainBlockRowCenter]}>
+                    <View>
+                        {primaryStat ? (
+                            <>
+                                <Text style={styles.mainLabel}>{primaryStat.label}</Text>
+                                <Text style={[styles.mainValue, { color: color }]}>{primaryStat.value}</Text>
+                            </>
+                        ) : (
+                            <Text style={styles.mainValueTitle}>{title}</Text>
+                        )}
+                    </View>
+                    <View style={[styles.iconBubble, { backgroundColor: `${color}15` }]}>
+                        <Ionicons name={icon} size={20} color={color} />
+                    </View>
                 </View>
-                <View style={styles.headerRight}>
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="notifications-outline" size={20} color={theme.headerText} />
-                    </TouchableOpacity>
+
+                {/* Grid */}
+                {secondaryStats.length > 0 && (
+                    <View style={styles.secondaryGrid}>
+                        {secondaryStats.map((stat, idx) => (
+                            <View key={idx} style={styles.secondaryItem}>
+                                <Text style={styles.secondaryLabel}>{stat.label}</Text>
+                                <Text style={styles.secondaryValue}>{stat.value}</Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
+
+                {/* Chart */}
+                <View style={styles.chartContainer}>
+                    {chartType === 'pie' ? (
+                        <View style={styles.pieContainer}>
+                            <PieChart
+                                data={chartData}
+                                donut
+                                radius={55}
+                                innerRadius={40}
+                                innerCircleColor={'#F8FAFC'}
+                                focusOnPress
+                                sectionAutoFocus
+                                centerLabelComponent={() => (
+                                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ fontSize: 16, color: color, fontWeight: 'bold' }}>Total</Text>
+                                    </View>
+                                )}
+                            />
+                            {/* Legend */}
+                            <View style={styles.pieLegend}>
+                                {chartData.map((item: any, index: number) => (
+                                    <View key={index} style={styles.legendItem}>
+                                        <View style={[styles.legendDot, { backgroundColor: item.color }]} />
+                                        <Text style={styles.legendText}>{item.label}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    ) : (
+                        <BarChart
+                            data={chartData}
+                            barWidth={10}
+                            spacing={14}
+                            height={110}
+                            roundedTop
+                            roundedBottom={false}
+                            hideRules
+                            xAxisThickness={0}
+                            yAxisThickness={0}
+                            yAxisTextStyle={{ color: '#94A3B8', fontSize: 9 }}
+                            noOfSections={3}
+                            maxValue={chartType === 'aging' ? 500 : 60}
+                            isAnimated
+                            renderTooltip={renderTooltip}
+                            leftShiftForTooltip={0}
+                            autoShiftTooltip
+                            initialSpacing={10}
+                        />
+                    )}
                 </View>
             </View>
+        );
+    };
 
-            <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+    return (
+        <SafeAreaView style={[styles.container, { backgroundColor: '#F1F5F9' }]}>
+            {/* Standard App Header - Restored */}
+            <View style={styles.header}>
+                <View style={styles.headerLeft}>
+                    <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuBtn}>
+                        <Ionicons name="menu" size={24} color="#FFF" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerText}>Dashboard</Text>
+                </View>
+                <TouchableOpacity>
+                    <Ionicons name="notifications-outline" size={20} color="#FFF" />
+                </TouchableOpacity>
+            </View>
 
-                {/* 1. SALES Section */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Sales</Text>
-                    </View>
-                    <View style={styles.statsContainer}>
-                        {salesStats.map((stat, i) => renderStatRow(stat.label, stat.value, stat.isPrimary, i))}
-                    </View>
-                    <View style={styles.chartWrapper}>
-                        <Text style={styles.chartLabel}>Sales (Shipment Value)</Text>
-                        {/* Legend hack */}
-                        <View style={styles.legendContainer}>
-                            <View style={styles.legendDot} />
-                            <Text style={styles.legendText}>2026</Text>
+            <ScrollView
+                style={styles.content}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
+                <MetricCard
+                    title="Sales"
+                    icon="bar-chart"
+                    color="#2563EB"
+                    stats={salesStats}
+                    chartData={salesData}
+                />
+
+                <MetricCard
+                    title="Profit"
+                    icon="trending-up"
+                    color="#059669"
+                    stats={profitStats}
+                    chartData={profitData}
+                />
+
+                <MetricCard
+                    title="Payment Receipts"
+                    icon="wallet"
+                    color="#7C3AED"
+                    stats={receiptsStats}
+                    chartData={receiptsData}
+                />
+
+                {/* Split Row: Aging & Top Products */}
+                <View style={styles.splitRow}>
+                    {/* Aging Report - Bar Chart */}
+                    <View style={styles.splitCard}>
+                        <View style={styles.splitHeader}>
+                            <Text style={styles.splitTitle}>Aging Report</Text>
                         </View>
-                        <BarChart
-                            data={salesChartData}
-                            width={screenWidth - 64}
-                            height={180}
-                            yAxisLabel=""
-                            yAxisSuffix=""
-                            chartConfig={chartConfig}
-                            style={styles.chartStyle}
-                            showValuesOnTopOfBars={false}
-                            fromZero
-                        />
-                        <Text style={styles.xAxisLabel}>Month</Text>
-                    </View>
-                </View>
-
-                {/* 2. GROSS PROFIT Section */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Gross Profit</Text>
-                    </View>
-                    <View style={styles.statsContainer}>
-                        {profitStats.map((stat, i) => renderStatRow(stat.label, stat.value, stat.isPrimary, i))}
-                    </View>
-                    <View style={styles.chartWrapper}>
-                        <Text style={styles.chartLabel}>Gross Profit (Sales - Purchases)</Text>
-                        <View style={styles.legendContainer}>
-                            <View style={styles.legendDot} />
-                            <Text style={styles.legendText}>2026</Text>
+                        <View style={styles.splitChartContainer}>
+                            <BarChart
+                                data={agingBarData}
+                                barWidth={12}
+                                spacing={12}
+                                width={screenWidth / 2 - 50}
+                                height={100}
+                                roundedTop
+                                hideRules
+                                xAxisThickness={0}
+                                yAxisThickness={0}
+                                yAxisTextStyle={{ color: '#94A3B8', fontSize: 8 }}
+                                noOfSections={3}
+                                maxValue={500}
+                                isAnimated
+                                initialSpacing={10}
+                                xAxisLabelTextStyle={{ color: '#64748B', fontSize: 8 }}
+                            />
                         </View>
-                        <BarChart
-                            data={profitChartData}
-                            width={screenWidth - 64}
-                            height={180}
-                            yAxisLabel=""
-                            yAxisSuffix=""
-                            chartConfig={chartConfig}
-                            style={styles.chartStyle}
-                            fromZero
-                        />
                     </View>
-                </View>
 
-                {/* 3. PAYMENT RECEIPTS Section */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Payment Receipts</Text>
-                    </View>
-                    <View style={styles.statsContainer}>
-                        {receiptsStats.map((stat, i) => renderStatRow(stat.label, stat.value, stat.isPrimary, i))}
-                    </View>
-                    <View style={styles.chartWrapper}>
-                        <Text style={styles.chartLabel}>Receipts</Text>
-                        <View style={styles.legendContainer}>
-                            <View style={styles.legendDot} />
-                            <Text style={styles.legendText}>2026</Text>
+                    {/* Top 5 Products */}
+                    <View style={styles.splitCard}>
+                        <View style={styles.splitHeader}>
+                            <Text style={styles.splitTitle}>Top 5 Products</Text>
                         </View>
-                        <BarChart
-                            data={receiptsChartData}
-                            width={screenWidth - 64}
-                            height={180}
-                            yAxisLabel=""
-                            yAxisSuffix=""
-                            chartConfig={chartConfig}
-                            style={styles.chartStyle}
-                            fromZero
-                        />
+                        <View style={styles.splitChartContainer}>
+                            <PieChart
+                                data={topProducts}
+                                donut
+                                radius={40}
+                                innerRadius={28}
+                                innerCircleColor={'#F8FAFC'}
+                                centerLabelComponent={() => (
+                                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ fontSize: 9, color: '#64748B', fontWeight: 'bold' }}>Top 5</Text>
+                                    </View>
+                                )}
+                            />
+                            {/* Mini Legend */}
+                            <View style={styles.miniLegend}>
+                                {topProducts.map((item, index) => (
+                                    <View key={index} style={styles.miniLegendItem}>
+                                        <View style={[styles.miniDot, { backgroundColor: item.color }]} />
+                                        <Text style={styles.miniLegendText}>{item.label}</Text>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
                     </View>
                 </View>
 
-                {/* 4. ACCOUNTS RECEIVABLE Section */}
-                <View style={styles.sectionCard}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Accounts Receivable</Text>
-                    </View>
-                    <View style={styles.chartWrapper}>
-                        <Text style={styles.chartLabel}>INR (Lakhs)</Text>
-                        <BarChart
-                            data={agingChartData}
-                            width={screenWidth - 64}
-                            height={180}
-                            yAxisLabel=""
-                            yAxisSuffix=""
-                            chartConfig={chartConfig}
-                            style={styles.chartStyle}
-                            fromZero
-                        />
-                        <Text style={styles.xAxisLabel}>Aging Buckets</Text>
-                    </View>
-                </View>
-
+                <View style={{ height: 20 }} />
             </ScrollView>
-
-            {/* User Menu removed */}
-
         </SafeAreaView>
     );
 };
@@ -221,192 +314,233 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F1F5F9', // Slate-100
+        backgroundColor: '#F1F5F9',
     },
     header: {
+        backgroundColor: '#1E3A8A',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         paddingTop: Platform.OS === 'android' ? 40 : 12,
         paddingBottom: 16,
-        backgroundColor: '#1E3A8A', // Deep Blue
-        borderBottomWidth: 0,
         elevation: 4,
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 },
     },
-    headerLeftContainer: {
+    headerLeft: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start',
     },
-    menuButton: {
-        marginRight: 12,
+    menuBtn: {
+        marginRight: 16,
     },
-    headerTitle: {
+    headerText: {
         fontSize: 18,
         fontWeight: '700',
         color: '#FFFFFF',
-        textAlign: 'left',
-    },
-    headerRight: {
-        flexDirection: 'row',
-        gap: 12,
-        alignItems: 'center',
-    },
-    iconButton: {
-        padding: 4,
-    },
-    headerAvatar: {
-        width: 28,
-        height: 28,
-        borderRadius: 14,
-        backgroundColor: '#FFFFFF',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 4,
-    },
-    avatarCircle: {
-        width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center'
-    },
-    avatarInitial: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#1E3A8A',
-    },
-    userMenuPopup: {
-        position: 'absolute',
-        top: 60,
-        right: 16,
-        width: 180,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 8,
-        paddingVertical: 2,
-        borderWidth: 1,
-        borderColor: '#E2E8F0',
-        zIndex: 100,
-        elevation: 10,
-        ...Platform.select({
-            web: { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
-            default: { shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }
-        })
-    },
-    menuPopupHeader: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#0F172A',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-    },
-    popupItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 6,
-        paddingHorizontal: 12,
-    },
-    popupIcon: {
-        marginRight: 8,
-    },
-    popupText: {
-        fontSize: 13,
-        color: '#334155',
-        fontWeight: '500',
-    },
-    popupDivider: {
-        height: 1,
-        backgroundColor: '#F1F5F9',
-        marginVertical: 2,
     },
     content: {
         flex: 1,
-        padding: 12,
     },
-
-    // --- New Section Card Styles ---
-    sectionCard: {
+    scrollContent: {
+        padding: 10,
+        paddingBottom: 40,
+    },
+    card: {
         backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 10,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 1,
+    },
+    mainBlockRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 4,
+    },
+    mainBlockRowCenter: {
+        alignItems: 'center',
+    },
+    iconBubble: {
+        width: 32,
+        height: 32,
         borderRadius: 8,
-        padding: 16,
-        marginBottom: 16,
-        ...Platform.select({
-            default: { elevation: 2, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4 }
-        }),
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    sectionHeader: {
-        marginBottom: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E2E8F0',
-        paddingBottom: 8,
+    mainLabel: {
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#64748B',
+        marginBottom: 0,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
-    sectionTitle: {
+    mainValue: {
+        fontSize: 24,
+        fontWeight: '800',
+        color: '#0F172A',
+        letterSpacing: -0.5,
+    },
+    mainValueTitle: {
         fontSize: 16,
+        fontWeight: '800',
+        color: '#0F172A',
+        letterSpacing: -0.5,
+    },
+    secondaryGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        backgroundColor: '#F8FAFC',
+        borderRadius: 8,
+        padding: 8,
+        marginBottom: 6,
+        borderWidth: 1,
+        borderColor: '#F1F5F9',
+    },
+    secondaryItem: {
+        width: '33.33%',
+        marginBottom: 4,
+        paddingRight: 4,
+    },
+    secondaryLabel: {
+        fontSize: 9,
+        fontWeight: '600',
+        color: '#94A3B8',
+        marginBottom: 0,
+    },
+    secondaryValue: {
+        fontSize: 12,
         fontWeight: '700',
-        color: '#1E293B', // Slate-800
+        color: '#334155',
     },
-    statsContainer: {
-        marginBottom: 16,
+    chartContainer: {
+        marginTop: 0,
+        alignItems: 'center',
     },
-    statRow: {
+    pieContainer: {
+        width: '100%',
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 4,
+    },
+    pieLegend: {
+        justifyContent: 'center',
+        marginLeft: 8,
+        flex: 1,
+    },
+    legendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+    legendDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        marginRight: 6,
+    },
+    legendText: {
+        fontSize: 10,
+        color: '#64748B',
+        fontWeight: '500',
+    },
+    // Split Row Styles
+    splitRow: {
+        flexDirection: 'row',
+        gap: 10,
+        marginBottom: 10,
+    },
+    splitCard: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 1,
+    },
+    splitHeader: {
+        marginBottom: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F1F5F9',
+        paddingBottom: 4,
+    },
+    splitTitle: {
+        fontSize: 12,
+        fontWeight: '700',
+        color: '#0F172A',
+    },
+    splitChartContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    productList: {
+        marginTop: 2,
+    },
+    productItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 8,
     },
-    statLabel: {
-        fontSize: 13,
-        color: '#64748B', // Slate-500
-        flex: 1,
-    },
-    statValue: {
-        fontSize: 13,
-        fontWeight: '500',
-        color: '#334155', // Slate-700
-    },
-    statValuePrimary: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#0F172A', // Slate-900
-    },
-    chartWrapper: {
-        backgroundColor: '#F8FAFC', // Very light background for chart area
-        borderRadius: 8,
-        padding: 8,
-        alignItems: 'center',
-    },
-    chartLabel: {
-        fontSize: 10,
-        color: '#64748B',
-        marginBottom: 4,
-        alignSelf: 'flex-start',
-    },
-    legendContainer: {
+    productInfo: {
         flexDirection: 'row',
         alignItems: 'center',
-        alignSelf: 'flex-end',
-        marginBottom: 4,
-    },
-    legendDot: {
-        width: 8,
-        height: 8,
-        backgroundColor: '#1D4ED8',
-        borderRadius: 4,
+        flex: 1,
         marginRight: 4,
     },
-    legendText: {
-        fontSize: 10,
-        color: '#64748B',
+    productDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        marginRight: 6,
     },
-    chartStyle: {
-        borderRadius: 8,
-        marginVertical: 4,
-    },
-    xAxisLabel: {
+    productName: {
         fontSize: 10,
+        color: '#475569',
+        fontWeight: '500',
+        flex: 1,
+    },
+    productValue: {
+        fontSize: 10,
+        fontWeight: '700',
+        color: '#0F172A',
+    },
+    // Mini Legend for Split Card
+    miniLegend: {
+        marginTop: 12,
+        width: '100%',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 8,
+    },
+    miniLegendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    miniDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        marginRight: 4,
+    },
+    miniLegendText: {
+        fontSize: 9,
         color: '#64748B',
-        marginTop: 4,
+        fontWeight: '500',
     }
 });
 

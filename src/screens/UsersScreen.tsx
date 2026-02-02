@@ -6,7 +6,6 @@ import {
     SafeAreaView,
     FlatList,
     TouchableOpacity,
-    Alert,
     RefreshControl,
     Platform,
     ActivityIndicator,
@@ -96,10 +95,6 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     };
 
     const handleCreateUser = () => {
-        // Navigate to GenericForm for Users
-        // Ideally we should support 'Users' title in GenericForm or make a new screen?
-        // AdminScreen says `navigation.navigate('Users')`, so we are here.
-        // If we want to Add User, we can reuse GenericForm with title="User" or "Users"
         navigation.navigate('GenericForm', { title: 'User', mode: 'create', viewMode: 'detail' });
     };
 
