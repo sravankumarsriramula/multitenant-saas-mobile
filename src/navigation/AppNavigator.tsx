@@ -27,6 +27,8 @@ import ShipmentDetailsScreen from '../screens/ShipmentDetailsScreen';
 import InvoiceDetailsScreen from '../screens/InvoiceDetailsScreen';
 import PaymentDetailsScreen from '../screens/PaymentDetailsScreen';
 import PurchaseOrderDetailsScreen from '../screens/PurchaseOrderDetailsScreen';
+import ReportsScreen from '../screens/ReportsScreen';
+import GenericReportScreen from '../screens/GenericReportScreen';
 import Loading from '../components/Loading';
 
 const Stack = createNativeStackNavigator();
@@ -238,6 +240,24 @@ const BottomTabNavigator = () => {
                     tabBarLabel: 'Purchase Order Details'
                 }}
             />
+            <Tab.Screen
+                name="Reports"
+                component={ReportsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Reports'
+                }}
+            />
+            <Tab.Screen
+                name="ReportView"
+                component={GenericReportScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Report View'
+                }}
+            />
         </Tab.Navigator>
     );
 };
@@ -257,6 +277,12 @@ const CustomDrawerContent = (props: any) => {
                 { label: 'Quotations', icon: 'file-document-edit-outline', screen: 'Quotations' },
                 { label: 'Orders', icon: 'clipboard-list-outline', screen: 'Orders' },
                 { label: 'Inventory', icon: 'warehouse', screen: 'TabHome' },
+            ]
+        },
+        {
+            title: 'REPORTS',
+            items: [
+                { label: 'Reports', icon: 'chart-bar', screen: 'Reports' },
             ]
         },
         {

@@ -10,8 +10,8 @@ import {
     Platform,
 } from 'react-native';
 import { useAuthStore } from '../store/authStore';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { BarChart, PieChart } from 'react-native-chart-kit';
+import { Ionicons } from '@expo/vector-icons';
+import { BarChart } from 'react-native-chart-kit';
 
 const { width } = Dimensions.get('window');
 const screenWidth = width;
@@ -24,32 +24,66 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const chartConfig = {
         backgroundGradientFrom: '#FFFFFF',
         backgroundGradientTo: '#FFFFFF',
-        color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`,
+        color: (opacity = 1) => `rgba(29, 78, 216, ${opacity})`, // Blue-700
         strokeWidth: 2,
         barPercentage: 0.7,
         decimalPlaces: 0,
         propsForLabels: {
             fontSize: 10,
-        }
+            fill: '#64748B',
+        },
+        propsForBackgroundLines: {
+            strokeDasharray: '', // solid lines
+            stroke: '#E2E8F0',
+        },
     };
 
     // --- MOCK DATA ---
-    const salesData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{ data: [20, 45, 28, 80, 99, 43] }],
-    };
-
-    const profitData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{ data: [15, 30, 20, 60, 75, 35] }],
-    };
-
-    const pieData = [
-        { name: 'Heat Reflective', population: 40, color: '#2563EB', legendFontColor: '#7F7F7F', legendFontSize: 10 },
-        { name: 'Multi Grade Oil', population: 30, color: '#F59E0B', legendFontColor: '#7F7F7F', legendFontSize: 10 },
-        { name: 'Seating Ball', population: 20, color: '#10B981', legendFontColor: '#7F7F7F', legendFontSize: 10 },
-        { name: 'Cotton', population: 10, color: '#EF4444', legendFontColor: '#7F7F7F', legendFontSize: 10 },
+    const salesStats = [
+        { label: 'Shipment Value (INR)', value: '₹26,81,16,791', isPrimary: true },
+        { label: 'Total Orders', value: '21', isPrimary: false },
+        { label: 'Total Shipments', value: '20', isPrimary: false },
+        { label: 'Order Value', value: '₹26,94,76,404', isPrimary: false },
     ];
+    const salesChartData = {
+        labels: ['Jan', 'Feb'],
+        datasets: [{ data: [10, 400] }], // Visual approximation: Jan low, Feb high
+    };
+
+    const profitStats = [
+        { label: '(Sales - Purchases)', value: '₹26,78,74,791', isPrimary: true },
+        { label: 'Purchase Orders', value: '12', isPrimary: false },
+        { label: 'PO Value', value: '₹5,56,87,106', isPrimary: false },
+    ];
+    const profitChartData = {
+        labels: ['Jan', 'Feb'],
+        datasets: [{ data: [15, 450] }], // Visual approximation
+    };
+
+    const receiptsStats = [
+        { label: 'Receipt Value (INR)', value: '₹4,50,000', isPrimary: true },
+        { label: 'Total Invoices', value: '20', isPrimary: false },
+        { label: 'Total Receipts', value: '1', isPrimary: false },
+        { label: 'Payment Due', value: '₹26,36,74,046', isPrimary: false },
+        { label: 'Payment Past Due', value: '₹26,36,74,046', isPrimary: false },
+    ];
+    const receiptsChartData = {
+        labels: ['Jan', 'Feb'],
+        datasets: [{ data: [0, 400] }], // Jan is 0 based on image
+    };
+
+    const agingChartData = {
+        labels: ['0-30', '31-60', '61-90', '90+'],
+        datasets: [{ data: [400, 0, 0, 0] }], // Only 0-30 has data
+    };
+
+
+    const renderStatRow = (label: string, value: string, isPrimary: boolean, index: number) => (
+        <View key={index} style={styles.statRow}>
+            <Text style={styles.statLabel}>{label}</Text>
+            <Text style={[styles.statValue, isPrimary && styles.statValuePrimary]}>{value}</Text>
+        </View>
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -80,73 +114,118 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                         </View>
                     </TouchableOpacity>
                 </View>
-
             </View>
 
             <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
-                {/* 1. Metric Cards */}
-                <View style={styles.cardsContainer}>
-                    <View style={styles.card}>
-                        <View style={styles.cardHeader}>
-                            <View style={styles.cardIconContainer}>
-                                <Text style={styles.cardIcon}>📦</Text>
-                            </View>
-                            <View style={[styles.badge, { backgroundColor: '#DCFCE7' }]}>
-                                <Text style={[styles.badgeText, { color: '#166534' }]}>+12.5%</Text>
-                            </View>
-                        </View>
-                        <Text style={styles.cardLabel}>Total Shipments</Text>
-                        <Text style={styles.cardValue}>{Math.floor(Math.random() * 50) + 120}</Text>
-                        <Text style={styles.cardSubtext}>vs last month</Text>
+
+                {/* 1. SALES Section */}
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Sales</Text>
                     </View>
-
-                    <View style={styles.card}>
-                        <View style={styles.cardHeader}>
-                            <View style={styles.cardIconContainer}>
-                                <Text style={styles.cardIcon}>💰</Text>
-                            </View>
-                            <View style={[styles.badge, { backgroundColor: '#FEE2E2' }]}>
-                                <Text style={[styles.badgeText, { color: '#991B1B' }]}>-2.4%</Text>
-                            </View>
+                    <View style={styles.statsContainer}>
+                        {salesStats.map((stat, i) => renderStatRow(stat.label, stat.value, stat.isPrimary, i))}
+                    </View>
+                    <View style={styles.chartWrapper}>
+                        <Text style={styles.chartLabel}>Sales (Shipment Value)</Text>
+                        {/* Legend hack */}
+                        <View style={styles.legendContainer}>
+                            <View style={styles.legendDot} />
+                            <Text style={styles.legendText}>2026</Text>
                         </View>
-                        <Text style={styles.cardLabel}>Revenue</Text>
-                        <Text style={styles.cardValue}>$ {(Math.random() * 10 + 40).toFixed(1)}k</Text>
-                        <Text style={styles.cardSubtext}>vs last month</Text>
+                        <BarChart
+                            data={salesChartData}
+                            width={screenWidth - 64}
+                            height={180}
+                            yAxisLabel=""
+                            yAxisSuffix=""
+                            chartConfig={chartConfig}
+                            style={styles.chartStyle}
+                            showValuesOnTopOfBars={false}
+                            fromZero
+                        />
+                        <Text style={styles.xAxisLabel}>Month</Text>
                     </View>
                 </View>
 
-                {/* 2. Charts */}
-                <View style={styles.chartContainer}>
-                    <Text style={styles.chartTitle}>Monthly Overview</Text>
-                    <BarChart
-                        data={salesData}
-                        width={screenWidth - 48}
-                        height={220}
-                        yAxisLabel="$"
-                        yAxisSuffix=""  // Added missing prop
-                        chartConfig={chartConfig}
-                        style={styles.chartStyle}
-                        showValuesOnTopOfBars
-                        fromZero
-                    />
+                {/* 2. GROSS PROFIT Section */}
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Gross Profit</Text>
+                    </View>
+                    <View style={styles.statsContainer}>
+                        {profitStats.map((stat, i) => renderStatRow(stat.label, stat.value, stat.isPrimary, i))}
+                    </View>
+                    <View style={styles.chartWrapper}>
+                        <Text style={styles.chartLabel}>Gross Profit (Sales - Purchases)</Text>
+                        <View style={styles.legendContainer}>
+                            <View style={styles.legendDot} />
+                            <Text style={styles.legendText}>2026</Text>
+                        </View>
+                        <BarChart
+                            data={profitChartData}
+                            width={screenWidth - 64}
+                            height={180}
+                            yAxisLabel=""
+                            yAxisSuffix=""
+                            chartConfig={chartConfig}
+                            style={styles.chartStyle}
+                            fromZero
+                        />
+                    </View>
                 </View>
 
-                <View style={styles.chartContainer}>
-                    <Text style={styles.chartTitle}>Product Distribution</Text>
-                    <PieChart
-                        data={pieData}
-                        width={screenWidth - 48}
-                        height={200}
-                        chartConfig={chartConfig}
-                        accessor={"population"}
-                        backgroundColor={"transparent"}
-                        paddingLeft={"15"}
-                        absolute
-                    />
+                {/* 3. PAYMENT RECEIPTS Section */}
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Payment Receipts</Text>
+                    </View>
+                    <View style={styles.statsContainer}>
+                        {receiptsStats.map((stat, i) => renderStatRow(stat.label, stat.value, stat.isPrimary, i))}
+                    </View>
+                    <View style={styles.chartWrapper}>
+                        <Text style={styles.chartLabel}>Receipts</Text>
+                        <View style={styles.legendContainer}>
+                            <View style={styles.legendDot} />
+                            <Text style={styles.legendText}>2026</Text>
+                        </View>
+                        <BarChart
+                            data={receiptsChartData}
+                            width={screenWidth - 64}
+                            height={180}
+                            yAxisLabel=""
+                            yAxisSuffix=""
+                            chartConfig={chartConfig}
+                            style={styles.chartStyle}
+                            fromZero
+                        />
+                    </View>
                 </View>
+
+                {/* 4. ACCOUNTS RECEIVABLE Section */}
+                <View style={styles.sectionCard}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Accounts Receivable</Text>
+                    </View>
+                    <View style={styles.chartWrapper}>
+                        <Text style={styles.chartLabel}>INR (Lakhs)</Text>
+                        <BarChart
+                            data={agingChartData}
+                            width={screenWidth - 64}
+                            height={180}
+                            yAxisLabel=""
+                            yAxisSuffix=""
+                            chartConfig={chartConfig}
+                            style={styles.chartStyle}
+                            fromZero
+                        />
+                        <Text style={styles.xAxisLabel}>Aging Buckets</Text>
+                    </View>
+                </View>
+
             </ScrollView>
 
-            {/* User Menu Popup (Overlay) */}
+            {/* User Menu Popup */}
             {menuVisible && (
                 <View style={styles.userMenuPopup}>
                     <Text style={styles.menuPopupHeader}>User</Text>
@@ -170,15 +249,14 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
             )}
 
-
-        </SafeAreaView >
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#EEF2FF', // Light Periwinkle background from image
+        backgroundColor: '#F1F5F9', // Slate-100
     },
     header: {
         flexDirection: 'row',
@@ -234,7 +312,7 @@ const styles = StyleSheet.create({
     },
     userMenuPopup: {
         position: 'absolute',
-        top: 60, // Ensure it clears the header
+        top: 60,
         right: 16,
         width: 180,
         backgroundColor: '#FFFFFF',
@@ -242,8 +320,8 @@ const styles = StyleSheet.create({
         paddingVertical: 2,
         borderWidth: 1,
         borderColor: '#E2E8F0',
-        zIndex: 100, // Force on top
-        elevation: 10, // Higher elevation for Android
+        zIndex: 100,
+        elevation: 10,
         ...Platform.select({
             web: { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' },
             default: { shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }
@@ -279,87 +357,90 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 12,
     },
-    // --- Metric Cards ---
-    cardsContainer: {
-        flexDirection: 'row',
-        gap: 12,
-        marginBottom: 16,
-    },
-    card: {
-        flex: 1,
+
+    // --- New Section Card Styles ---
+    sectionCard: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 12, // Softer corners
+        borderRadius: 8,
         padding: 16,
+        marginBottom: 16,
         ...Platform.select({
             default: { elevation: 2, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4 }
         }),
-        borderWidth: 1,
-        borderColor: '#F1F5F9',
     },
-    cardHeader: {
+    sectionHeader: {
+        marginBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0',
+        paddingBottom: 8,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#1E293B', // Slate-800
+    },
+    statsContainer: {
+        marginBottom: 16,
+    },
+    statRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 12,
-    },
-    cardIconContainer: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#F8FAFC',
         alignItems: 'center',
-        justifyContent: 'center',
+        marginBottom: 8,
     },
-    cardIcon: {
+    statLabel: {
+        fontSize: 13,
+        color: '#64748B', // Slate-500
+        flex: 1,
+    },
+    statValue: {
+        fontSize: 13,
+        fontWeight: '500',
+        color: '#334155', // Slate-700
+    },
+    statValuePrimary: {
         fontSize: 16,
-    },
-    badge: {
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: 12,
-    },
-    badgeText: {
-        fontSize: 10,
         fontWeight: '700',
+        color: '#0F172A', // Slate-900
     },
-    cardLabel: {
-        fontSize: 12,
-        fontWeight: '600',
+    chartWrapper: {
+        backgroundColor: '#F8FAFC', // Very light background for chart area
+        borderRadius: 8,
+        padding: 8,
+        alignItems: 'center',
+    },
+    chartLabel: {
+        fontSize: 10,
         color: '#64748B',
         marginBottom: 4,
+        alignSelf: 'flex-start',
     },
-    cardValue: {
-        fontSize: 20,
-        fontWeight: '800',
-        color: '#0F172A',
-        marginBottom: 2,
+    legendContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'flex-end',
+        marginBottom: 4,
     },
-    cardSubtext: {
+    legendDot: {
+        width: 8,
+        height: 8,
+        backgroundColor: '#1D4ED8',
+        borderRadius: 4,
+        marginRight: 4,
+    },
+    legendText: {
         fontSize: 10,
-        color: '#94A3B8',
-    },
-    // --- Charts ---
-    chartContainer: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 16,
-        borderWidth: 1,
-        borderColor: '#F1F5F9',
-        ...Platform.select({
-            default: { elevation: 2, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4 }
-        }),
-    },
-    chartTitle: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#0F172A',
-        marginBottom: 16,
+        color: '#64748B',
     },
     chartStyle: {
-        borderRadius: 16,
-        paddingRight: 0,
+        borderRadius: 8,
+        marginVertical: 4,
     },
+    xAxisLabel: {
+        fontSize: 10,
+        color: '#64748B',
+        marginTop: 4,
+    }
 });
 
 export default HomeScreen;
