@@ -9,11 +9,14 @@ import {
     Platform,
 } from 'react-native';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
+import ThemeSelector from '../components/ThemeSelector';
 
 const ProfileScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { user, logout } = useAuthStore();
+    const { theme } = useThemeStore();
 
     const handleLogout = async () => {
         await logout();
@@ -28,40 +31,43 @@ const ProfileScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     ];
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
             {/* Standard Header */}
-            <View style={styles.topHeader}>
+            <View style={[styles.topHeader, { backgroundColor: theme.headerBackground }]}>
                 <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                    <Ionicons name="menu" size={24} color="#FFFFFF" />
+                    <Ionicons name="menu" size={24} color={theme.headerText} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Profile</Text>
+                <Text style={[styles.headerTitle, { color: theme.headerText }]}>Profile</Text>
                 <View style={{ width: 40 }} />
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.profileCard}>
-                    <View style={styles.avatar}>
-                        <Text style={styles.avatarText}>
+                <View style={[styles.profileCard, { backgroundColor: theme.surface }]}>
+                    <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
+                        <Text style={[styles.avatarText, { color: theme.textInverse }]}>
                             {user?.name?.charAt(0).toUpperCase() || 'U'}
                         </Text>
                     </View>
-                    <Text style={styles.userName}>{user?.name || 'User'}</Text>
-                    <Text style={styles.userEmail}>{user?.email || ''}</Text>
+                    <Text style={[styles.userName, { color: theme.text }]}>{user?.name || 'User'}</Text>
+                    <Text style={[styles.userEmail, { color: theme.textTertiary }]}>{user?.email || ''}</Text>
                 </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Account Information</Text>
+                {/* Theme Selector */}
+                <ThemeSelector />
+
+                <View style={[styles.section, { backgroundColor: theme.surface }]}>
+                    <Text style={[styles.sectionTitle, { color: theme.text }]}>Account Information</Text>
                     {profileItems.map((item, index) => (
-                        <View key={index} style={styles.infoRow}>
-                            <Text style={styles.infoLabel}>{item.label}</Text>
-                            <Text style={styles.infoValue}>{item.value}</Text>
+                        <View key={index} style={[styles.infoRow, { borderBottomColor: theme.borderLight }]}>
+                            <Text style={[styles.infoLabel, { color: theme.textTertiary }]}>{item.label}</Text>
+                            <Text style={[styles.infoValue, { color: theme.text }]}>{item.value}</Text>
                         </View>
                     ))}
                 </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Account Created</Text>
-                    <Text style={styles.dateText}>
+                <View style={[styles.section, { backgroundColor: theme.surface }]}>
+                    <Text style={[styles.sectionTitle, { color: theme.text }]}>Account Created</Text>
+                    <Text style={[styles.dateText, { color: theme.text }]}>
                         {user?.createdAt
                             ? new Date(user.createdAt).toLocaleDateString('en-US', {
                                 year: 'numeric',

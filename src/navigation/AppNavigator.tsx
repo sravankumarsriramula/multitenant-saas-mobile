@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SvgUri } from 'react-native-svg';
 
@@ -21,6 +22,11 @@ import InvoicesScreen from '../screens/InvoicesScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
 import PurchaseOrdersScreen from '../screens/PurchaseOrdersScreen';
 import QuotationDetailsScreen from '../screens/QuotationDetailsScreen';
+import OrderDetailsScreen from '../screens/OrderDetailsScreen';
+import ShipmentDetailsScreen from '../screens/ShipmentDetailsScreen';
+import InvoiceDetailsScreen from '../screens/InvoiceDetailsScreen';
+import PaymentDetailsScreen from '../screens/PaymentDetailsScreen';
+import PurchaseOrderDetailsScreen from '../screens/PurchaseOrderDetailsScreen';
 import Loading from '../components/Loading';
 
 const Stack = createNativeStackNavigator();
@@ -40,17 +46,30 @@ const MenuBadge = ({ count, color = '#EF4444' }: { count: number, color?: string
 
 // 1. Bottom Tab Navigator
 const BottomTabNavigator = () => {
+    const { theme } = useThemeStore();
+
     return (
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
-                tabBarStyle: styles.tabBar,
+                tabBarStyle: {
+                    backgroundColor: theme.tabBarBackground,
+                    borderTopWidth: 1,
+                    borderTopColor: theme.tabBarBorder,
+                    height: Platform.OS === 'ios' ? 88 : 68,
+                    paddingTop: 8,
+                    paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+                    elevation: 10,
+                    shadowColor: theme.shadow,
+                    shadowOffset: { width: 0, height: -4 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                },
                 tabBarShowLabel: true,
-                tabBarLabelPosition: 'below-icon', // Force label below icon
+                tabBarLabelPosition: 'below-icon',
                 tabBarLabelStyle: styles.tabBarLabel,
-                tabBarActiveTintColor: '#1E3A8A', // Deep Blue
-                tabBarInactiveTintColor: '#94A3B8',
-                // Ensure visible items split space evenly but don't force centering which might clip text
+                tabBarActiveTintColor: theme.tabBarActive,
+                tabBarInactiveTintColor: theme.tabBarInactive,
                 tabBarItemStyle: {
                     flex: 1,
                 },
@@ -165,6 +184,60 @@ const BottomTabNavigator = () => {
                     tabBarLabel: 'Purchase Orders'
                 }}
             />
+            <Tab.Screen
+                name="QuotationDetails"
+                component={QuotationDetailsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Quotation Details'
+                }}
+            />
+            <Tab.Screen
+                name="OrderDetails"
+                component={OrderDetailsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Order Details'
+                }}
+            />
+            <Tab.Screen
+                name="ShipmentDetails"
+                component={ShipmentDetailsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Shipment Details'
+                }}
+            />
+            <Tab.Screen
+                name="InvoiceDetails"
+                component={InvoiceDetailsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Invoice Details'
+                }}
+            />
+            <Tab.Screen
+                name="PaymentDetails"
+                component={PaymentDetailsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Payment Details'
+                }}
+            />
+            <Tab.Screen
+                name="PurchaseOrderDetails"
+                component={PurchaseOrderDetailsScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Purchase Order Details'
+                }}
+            />
         </Tab.Navigator>
     );
 };
@@ -172,6 +245,7 @@ const BottomTabNavigator = () => {
 // 2. Custom Drawer Content
 const CustomDrawerContent = (props: any) => {
     const { user, logout } = useAuthStore();
+    const { theme } = useThemeStore();
     const [menuVisible, setMenuVisible] = React.useState(false);
 
     const sections = [
@@ -205,9 +279,9 @@ const CustomDrawerContent = (props: any) => {
     const toggleMenu = () => setMenuVisible(!menuVisible);
 
     return (
-        <View style={styles.drawerRoot}>
+        <View style={[styles.drawerRoot, { backgroundColor: theme.surface }]}>
             {/* Brand Header */}
-            <View style={styles.brandHeader}>
+            <View style={[styles.brandHeader, { backgroundColor: theme.headerBackground, borderBottomColor: theme.headerBackground }]}>
                 <View style={{ marginRight: 12 }}>
                     <SvgUri
                         width="32"
@@ -215,7 +289,7 @@ const CustomDrawerContent = (props: any) => {
                         uri="https://genericdemo.expodite.co.in/signatures/assets/images/Expodite_Logo_Menu.svg"
                     />
                 </View>
-                <Text style={styles.brandTitle}>EXIM SAAS</Text>
+                <Text style={[styles.brandTitle, { color: theme.headerText }]}>EXIM SAAS</Text>
             </View>
 
             {/* Menu Items */}
@@ -226,7 +300,7 @@ const CustomDrawerContent = (props: any) => {
             >
                 {sections.map((section, idx) => (
                     <View key={idx} style={styles.menuSection}>
-                        <Text style={styles.sectionHeader}>{section.title}</Text>
+                        <Text style={[styles.sectionHeader, { color: theme.textTertiary }]}>{section.title}</Text>
                         {section.items.map((item, i) => (
                             <TouchableOpacity
                                 key={i}
@@ -239,8 +313,8 @@ const CustomDrawerContent = (props: any) => {
                                 activeOpacity={0.6}
                             >
                                 <View style={styles.menuItemLeft}>
-                                    <MaterialCommunityIcons name={item.icon as any} size={22} color="#475569" style={styles.menuItemIcon} />
-                                    <Text style={styles.menuItemLabel}>{item.label}</Text>
+                                    <MaterialCommunityIcons name={item.icon as any} size={22} color={theme.textSecondary} style={styles.menuItemIcon} />
+                                    <Text style={[styles.menuItemLabel, { color: theme.text }]}>{item.label}</Text>
                                 </View>
                             </TouchableOpacity>
                         ))}
@@ -249,10 +323,10 @@ const CustomDrawerContent = (props: any) => {
             </ScrollView>
 
             {/* Footer */}
-            <View style={styles.drawerFooter}>
+            <View style={[styles.drawerFooter, { borderTopColor: theme.borderLight }]}>
                 <TouchableOpacity style={styles.footerItem} onPress={logout}>
-                    <MaterialCommunityIcons name="logout" size={22} color="#EF4444" style={{ marginRight: 12 }} />
-                    <Text style={styles.footerLabel}>Sign Out</Text>
+                    <MaterialCommunityIcons name="logout" size={22} color={theme.error} style={{ marginRight: 12 }} />
+                    <Text style={[styles.footerLabel, { color: theme.error }]}>Sign Out</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -261,17 +335,19 @@ const CustomDrawerContent = (props: any) => {
 
 // 3. Drawer Navigator
 const MainDrawerNavigator = () => {
+    const { theme } = useThemeStore();
+
     return (
         <Drawer.Navigator
             drawerContent={(props) => <CustomDrawerContent {...props} />}
             screenOptions={{
                 headerShown: false,
                 drawerStyle: {
-                    backgroundColor: '#FFFFFF',
-                    width: '65%', // Tighter width
+                    backgroundColor: theme.surface,
+                    width: '65%',
                 },
                 drawerType: 'front',
-                overlayColor: 'rgba(15, 23, 42, 0.8)', // Darker overlay
+                overlayColor: theme.overlay,
                 swipeEnabled: true,
             }}
         >
@@ -285,9 +361,11 @@ const MainDrawerNavigator = () => {
 // 4. Root App Navigator
 const AppNavigator: React.FC = () => {
     const { isAuthenticated, isLoading, loadUser } = useAuthStore();
+    const { initializeTheme } = useThemeStore();
 
     useEffect(() => {
         loadUser();
+        initializeTheme();
     }, []);
 
     if (isLoading) return <Loading message="Loading..." />;
@@ -303,7 +381,6 @@ const AppNavigator: React.FC = () => {
                 ) : (
                     <Stack.Screen name="App" component={MainDrawerNavigator} />
                 )}
-                <Stack.Screen name="QuotationDetails" component={QuotationDetailsScreen} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );
@@ -422,7 +499,6 @@ const styles = StyleSheet.create({
     tabBarLabel: {
         fontSize: 11,
         fontWeight: '600',
-        marginBottom: 4, // Ensure it sits up from bottom
     },
     tabBadge: {
         position: 'absolute',

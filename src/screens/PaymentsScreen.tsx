@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 
 // Mock Data
 interface Payment {
@@ -54,6 +55,7 @@ const getStatusColor = (status: string) => {
 
 const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { user, logout } = useAuthStore();
+    const { theme } = useThemeStore();
     const [menuVisible, setMenuVisible] = useState(false);
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
     const [isFilterExpanded, setIsFilterExpanded] = useState(false);
@@ -62,21 +64,25 @@ const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const renderItem = ({ item }: { item: Payment }) => {
         const { bg, text } = getStatusColor(item.status);
         return (
-            <TouchableOpacity style={styles.card} activeOpacity={0.7}>
+            <TouchableOpacity
+                style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder }]}
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('PaymentDetails', { id: item.id })}
+            >
                 {/* Top Row */}
                 <View style={styles.cardHeader}>
                     <View style={styles.headerLeft}>
-                        <TouchableOpacity style={styles.checkbox} />
-                        <View style={styles.iconBox}>
-                            <MaterialCommunityIcons name="credit-card-outline" size={18} color="#0EA5E9" />
+                        <TouchableOpacity style={[styles.checkbox, { borderColor: theme.borderDark }]} />
+                        <View style={[styles.iconBox, { backgroundColor: theme.primaryLight + '20' }]}>
+                            <MaterialCommunityIcons name="credit-card-outline" size={18} color={theme.primaryLight} />
                         </View>
 
                         <View style={styles.headerTextContainer}>
-                            <Text style={styles.idText}>{item.id}</Text>
+                            <Text style={[styles.idText, { color: theme.primaryLight }]}>{item.id}</Text>
                             <Text style={styles.companyRow} numberOfLines={1}>
-                                <Text style={styles.companyName}>{item.payerCompany}</Text>
-                                <Text style={styles.separator}> • </Text>
-                                <Text style={styles.productText}>{item.amount}</Text>
+                                <Text style={[styles.companyName, { color: theme.text }]}>{item.payerCompany}</Text>
+                                <Text style={[styles.separator, { color: theme.borderDark }]}> • </Text>
+                                <Text style={[styles.productText, { color: theme.textSecondary }]}>{item.amount}</Text>
                             </Text>
                         </View>
                     </View>
@@ -87,23 +93,23 @@ const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 </View>
 
                 {/* Details Row */}
-                <View style={styles.detailsRow}>
+                <View style={[styles.detailsRow, { borderTopColor: theme.borderLight }]}>
                     <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Invoice Ref</Text>
-                        <Text style={styles.detailValue}>{item.invoiceId}</Text>
+                        <Text style={[styles.detailLabel, { color: theme.textTertiary }]}>Invoice Ref</Text>
+                        <Text style={[styles.detailValue, { color: theme.textSecondary }]}>{item.invoiceId}</Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Method</Text>
-                        <Text style={styles.detailValue}>{item.method}</Text>
+                        <Text style={[styles.detailLabel, { color: theme.textTertiary }]}>Method</Text>
+                        <Text style={[styles.detailValue, { color: theme.textSecondary }]}>{item.method}</Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Date</Text>
-                        <Text style={styles.detailValue}>{item.date}</Text>
+                        <Text style={[styles.detailLabel, { color: theme.textTertiary }]}>Date</Text>
+                        <Text style={[styles.detailValue, { color: theme.textSecondary }]}>{item.date}</Text>
                     </View>
                 </View>
 
                 <View style={styles.cardAction}>
-                    <MaterialCommunityIcons name="chevron-right" size={20} color="#CBD5E1" />
+                    <MaterialCommunityIcons name="chevron-right" size={20} color={theme.borderDark} />
                 </View>
             </TouchableOpacity>
         );
@@ -111,63 +117,63 @@ const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     const renderSectionHeader = ({ section: { title } }: { section: { title: string } }) => (
         <View style={styles.sectionHeader}>
-            <Text style={styles.sectionHeaderText}>{title}</Text>
+            <Text style={[styles.sectionHeaderText, { color: theme.text }]}>{title}</Text>
         </View>
     );
 
     const renderFooter = () => (
         <View style={styles.paginationContainer}>
-            <TouchableOpacity style={styles.pageButton}>
-                <MaterialCommunityIcons name="chevron-left" size={20} color="#64748B" />
-                <Text style={styles.pageButtonText}>Prev</Text>
+            <TouchableOpacity style={[styles.pageButton, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                <MaterialCommunityIcons name="chevron-left" size={20} color={theme.textSecondary} />
+                <Text style={[styles.pageButtonText, { color: theme.textSecondary }]}>Prev</Text>
             </TouchableOpacity>
-            <Text style={styles.pageInfo}>Page 1 of 5</Text>
-            <TouchableOpacity style={styles.pageButton}>
-                <Text style={styles.pageButtonText}>Next</Text>
-                <MaterialCommunityIcons name="chevron-right" size={20} color="#64748B" />
+            <Text style={[styles.pageInfo, { color: theme.textSecondary }]}>Page 1 of 5</Text>
+            <TouchableOpacity style={[styles.pageButton, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+                <Text style={[styles.pageButtonText, { color: theme.textSecondary }]}>Next</Text>
+                <MaterialCommunityIcons name="chevron-right" size={20} color={theme.textSecondary} />
             </TouchableOpacity>
         </View>
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
             {/* Header */}
-            <View style={styles.header}>
+            <View style={[styles.header, { backgroundColor: theme.headerBackground }]}>
                 {!isSearchExpanded ? (
                     <>
                         <View style={styles.headerLeftContainer}>
                             <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                                <Ionicons name="menu" size={24} color="#FFFFFF" />
+                                <Ionicons name="menu" size={24} color={theme.headerText} />
                             </TouchableOpacity>
-                            <Text style={styles.headerTitle}>Payments</Text>
+                            <Text style={[styles.headerTitle, { color: theme.headerText }]}>Payments</Text>
                         </View>
 
                         <View style={styles.headerRight}>
                             <TouchableOpacity onPress={() => setIsSearchExpanded(true)} style={styles.iconButton}>
-                                <Ionicons name="search" size={20} color="#FFFFFF" />
+                                <Ionicons name="search" size={20} color={theme.headerText} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.createButtonIconSmall}>
-                                <Ionicons name="add" size={20} color="#1E3A8A" />
+                            <TouchableOpacity style={[styles.createButtonIconSmall, { backgroundColor: theme.surface }]}>
+                                <Ionicons name="add" size={20} color={theme.primary} />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.iconButton} onPress={() => setIsFilterExpanded(!isFilterExpanded)}>
-                                <Ionicons name={isFilterExpanded ? "filter" : "filter-outline"} size={20} color="#FFFFFF" />
+                                <Ionicons name={isFilterExpanded ? "filter" : "filter-outline"} size={20} color={theme.headerText} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.headerAvatar} onPress={() => setMenuVisible(!menuVisible)}>
-                                <Text style={styles.avatarInitial}>{user?.name?.[0] || 'U'}</Text>
+                            <TouchableOpacity style={[styles.headerAvatar, { backgroundColor: theme.surface }]} onPress={() => setMenuVisible(!menuVisible)}>
+                                <Text style={[styles.avatarInitial, { color: theme.primary }]}>{user?.name?.[0] || 'U'}</Text>
                             </TouchableOpacity>
                         </View>
                     </>
                 ) : (
-                    <View style={styles.searchBarHeader}>
-                        <Ionicons name="search" size={20} color="#64748B" />
+                    <View style={[styles.searchBarHeader, { backgroundColor: theme.surface }]}>
+                        <Ionicons name="search" size={20} color={theme.textSecondary} />
                         <TextInput
                             placeholder="Search Payments..."
-                            style={styles.searchInputHeader}
-                            placeholderTextColor="#94A3B8"
+                            style={[styles.searchInputHeader, { color: theme.text }]}
+                            placeholderTextColor={theme.textTertiary}
                             autoFocus={true}
                         />
                         <TouchableOpacity onPress={() => setIsSearchExpanded(false)}>
-                            <Text style={styles.cancelText}>Cancel</Text>
+                            <Text style={[styles.cancelText, { color: theme.headerText }]}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 )}
@@ -175,14 +181,14 @@ const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
             {/* Filter */}
             {isFilterExpanded && (
-                <View style={styles.filterContainer}>
-                    <TouchableOpacity style={styles.filterDropdown}>
-                        <Text style={styles.filterDropdownText}>Select Date</Text>
-                        <Ionicons name="calendar-outline" size={18} color="#64748B" />
+                <View style={[styles.filterContainer, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}>
+                    <TouchableOpacity style={[styles.filterDropdown, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                        <Text style={[styles.filterDropdownText, { color: theme.textSecondary }]}>Select Date</Text>
+                        <Ionicons name="calendar-outline" size={18} color={theme.textSecondary} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.filterDropdown}>
-                        <Text style={styles.filterDropdownText}>Select Method</Text>
-                        <Ionicons name="chevron-down" size={18} color="#64748B" />
+                    <TouchableOpacity style={[styles.filterDropdown, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                        <Text style={[styles.filterDropdownText, { color: theme.textSecondary }]}>Select Method</Text>
+                        <Ionicons name="chevron-down" size={18} color={theme.textSecondary} />
                     </TouchableOpacity>
                 </View>
             )}
@@ -200,10 +206,10 @@ const PaymentsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
             {/* User Menu */}
             {menuVisible && (
-                <View style={styles.userMenuPopup}>
+                <View style={[styles.userMenuPopup, { backgroundColor: theme.surface, borderColor: theme.border }]}>
                     <TouchableOpacity style={styles.popupItem} onPress={() => { setMenuVisible(false); logout(); }}>
-                        <Ionicons name="log-out-outline" size={16} color="#EF4444" style={{ marginRight: 8 }} />
-                        <Text style={{ color: '#EF4444', fontSize: 13 }}>Logout</Text>
+                        <Ionicons name="log-out-outline" size={16} color={theme.error} style={{ marginRight: 8 }} />
+                        <Text style={{ color: theme.error, fontSize: 13 }}>Logout</Text>
                     </TouchableOpacity>
                 </View>
             )}

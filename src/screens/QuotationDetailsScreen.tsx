@@ -10,8 +10,10 @@ import {
     TextInput
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useThemeStore } from '../store/themeStore';
 
 const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ navigation, route }) => {
+    const { theme } = useThemeStore();
     const quotationId = route.params?.id || '#QTN-2026-501';
 
     // Collapsible Sections State
@@ -38,44 +40,44 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
             {/* Header - Single Line */}
-            <View style={styles.header}>
+            <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#1E293B" />
+                    <Ionicons name="arrow-back" size={24} color={theme.text} />
                 </TouchableOpacity>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center' }} style={{ flex: 1 }}>
                     <View style={styles.headerTitleContainer}>
                         <MaterialCommunityIcons name="file-document-outline" size={20} color="#F97316" />
-                        <Text style={styles.headerTitle} numberOfLines={1}>{quotationId}</Text>
+                        <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>{quotationId}</Text>
                         <View style={styles.statusBadge}>
                             <Text style={styles.statusText}>PASSED</Text>
                         </View>
-                        <View style={styles.verticalDivider} />
-                        <Text style={styles.companyName} numberOfLines={1}>SKY SHORE</Text>
-                        <Text style={styles.dateText} numberOfLines={1}>Jan 22</Text>
+                        <View style={[styles.verticalDivider, { backgroundColor: theme.borderDark }]} />
+                        <Text style={[styles.companyName, { color: theme.text }]} numberOfLines={1}>SKY SHORE</Text>
+                        <Text style={[styles.dateText, { color: theme.textSecondary }]} numberOfLines={1}>Jan 22</Text>
                     </View>
                 </ScrollView>
 
                 <TouchableOpacity style={styles.settingsIcon}>
-                    <Ionicons name="settings-outline" size={20} color="#94A3B8" />
+                    <Ionicons name="settings-outline" size={20} color={theme.textTertiary} />
                 </TouchableOpacity>
             </View>
 
             {/* Tab Bar (Scrollable) */}
-            <View style={styles.tabContainer}>
+            <View style={[styles.tabContainer, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScrollContent}>
                     <TouchableOpacity
-                        style={[styles.tabItem, activeTab === 'Items' && styles.tabItemActive]}
+                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Items' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
                         onPress={() => scrollToSection('Items')}
                     >
-                        <MaterialCommunityIcons name="cube-outline" size={16} color={activeTab === 'Items' ? "#1E293B" : "#64748B"} />
-                        <Text style={[styles.tabText, activeTab === 'Items' && { color: '#1E293B' }]}>Items</Text>
+                        <MaterialCommunityIcons name="cube-outline" size={16} color={activeTab === 'Items' ? theme.text : theme.textSecondary} />
+                        <Text style={[styles.tabText, { color: activeTab === 'Items' ? theme.text : theme.textSecondary }]}>Items</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, activeTab === 'Terms' && styles.tabItemActive]}
+                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Terms' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
                         onPress={() => scrollToSection('Terms')}
                     >
                         <MaterialCommunityIcons name="file-document-edit-outline" size={16} color="#10B981" />
@@ -83,7 +85,7 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, activeTab === 'Regulatory' && styles.tabItemActive]}
+                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Regulatory' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
                         onPress={() => scrollToSection('Regulatory')}
                     >
                         <MaterialCommunityIcons name="shield-check-outline" size={16} color="#06B6D4" />
@@ -91,7 +93,7 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, activeTab === 'Accept' && styles.tabItemActive]}
+                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Accept' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
                         onPress={() => scrollToSection('Accept')}
                     >
                         <MaterialCommunityIcons name="check-circle-outline" size={16} color="#10B981" />
@@ -99,7 +101,7 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, activeTab === 'Orders' && styles.tabItemActive]}
+                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Orders' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
                         onPress={() => scrollToSection('Orders')}
                     >
                         <MaterialCommunityIcons name="cart-outline" size={16} color="#F97316" />
@@ -116,22 +118,22 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
 
                 {/* Items Grid Section */}
                 <View
-                    style={[styles.sectionCard, styles.itemsSectionCard]}
+                    style={[styles.sectionCard, styles.itemsSectionCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
                     onLayout={(event) => handleLayout('Items', event)}
                 >
                     <TouchableOpacity
-                        style={styles.sectionHeader}
+                        style={[styles.sectionHeader, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}
                         onPress={() => setIsItemsExpanded(!isItemsExpanded)}
                     >
                         <View style={styles.sectionTitleRow}>
                             <View style={[styles.sectionIconBox, { backgroundColor: '#FFF7ED' }]}>
                                 <MaterialCommunityIcons name="cube-outline" size={18} color="#F97316" />
                             </View>
-                            <Text style={styles.sectionTitle}>Items</Text>
+                            <Text style={[styles.sectionTitle, { color: theme.text }]}>Items</Text>
                         </View>
                         <View style={styles.sectionHeaderRight}>
-                            <Ionicons name="time-outline" size={18} color="#94A3B8" style={{ marginRight: 8 }} />
-                            <Ionicons name={isItemsExpanded ? "chevron-up" : "chevron-down"} size={18} color="#94A3B8" />
+                            <Ionicons name="time-outline" size={18} color={theme.textTertiary} style={{ marginRight: 8 }} />
+                            <Ionicons name={isItemsExpanded ? "chevron-up" : "chevron-down"} size={18} color={theme.textTertiary} />
                         </View>
                     </TouchableOpacity>
 
@@ -139,28 +141,28 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                         <View style={styles.itemsContent}>
                             {/* Search & Filter Toolbar */}
                             <View style={styles.itemsToolbar}>
-                                <View style={styles.searchBar}>
-                                    <Ionicons name="search" size={16} color="#94A3B8" />
+                                <View style={[styles.searchBar, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                    <Ionicons name="search" size={16} color={theme.textTertiary} />
                                     <TextInput
                                         placeholder="Search products..."
-                                        style={styles.searchInput}
-                                        placeholderTextColor="#94A3B8"
+                                        style={[styles.searchInput, { color: theme.text }]}
+                                        placeholderTextColor={theme.textTertiary}
                                     />
                                 </View>
-                                <TouchableOpacity style={styles.filterButton}>
-                                    <Ionicons name="filter-outline" size={16} color="#1E293B" />
-                                    <Text style={styles.filterText}>Filter</Text>
+                                <TouchableOpacity style={[styles.filterButton, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                    <Ionicons name="filter-outline" size={16} color={theme.text} />
+                                    <Text style={[styles.filterText, { color: theme.text }]}>Filter</Text>
                                 </TouchableOpacity>
                             </View>
 
                             <View style={styles.actionButtonsRow}>
-                                <TouchableOpacity style={styles.actionBtn}>
-                                    <MaterialCommunityIcons name="tray-arrow-down" size={16} color="#1E293B" />
-                                    <Text style={styles.actionBtnText}>Export</Text>
+                                <TouchableOpacity style={[styles.actionBtn, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                    <MaterialCommunityIcons name="tray-arrow-down" size={16} color={theme.text} />
+                                    <Text style={[styles.actionBtnText, { color: theme.text }]}>Export</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.actionBtn}>
-                                    <MaterialCommunityIcons name="view-column-outline" size={16} color="#1E293B" />
-                                    <Text style={styles.actionBtnText}>Columns</Text>
+                                <TouchableOpacity style={[styles.actionBtn, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                    <MaterialCommunityIcons name="view-column-outline" size={16} color={theme.text} />
+                                    <Text style={[styles.actionBtnText, { color: theme.text }]}>Columns</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -168,17 +170,17 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                             <ScrollView horizontal showsHorizontalScrollIndicator={true} style={styles.gridScroll}>
                                 <View>
                                     {/* Table Header */}
-                                    <View style={styles.gridHeader}>
-                                        <Text style={[styles.gridHeaderCell, { width: 40 }]}>#</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 140 }]}>Product Name</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 220 }]}>Description</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 80 }]}>HS Code</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 100 }]}>SKU</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 80, textAlign: 'right' }]}>Quantity</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 60 }]}>UOM</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 80, textAlign: 'right' }]}>Rate</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 100, textAlign: 'right' }]}>Amount</Text>
-                                        <Text style={[styles.gridHeaderCell, { width: 80, textAlign: 'center' }]}>Actions</Text>
+                                    <View style={[styles.gridHeader, { backgroundColor: theme.backgroundTertiary, borderBottomColor: theme.border }]}>
+                                        <Text style={[styles.gridHeaderCell, { width: 40, color: theme.textSecondary }]}>#</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 140, color: theme.textSecondary }]}>Product Name</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 220, color: theme.textSecondary }]}>Description</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 80, color: theme.textSecondary }]}>HS Code</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 100, color: theme.textSecondary }]}>SKU</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 80, textAlign: 'right', color: theme.textSecondary }]}>Quantity</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 60, color: theme.textSecondary }]}>UOM</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 80, textAlign: 'right', color: theme.textSecondary }]}>Rate</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 100, textAlign: 'right', color: theme.textSecondary }]}>Amount</Text>
+                                        <Text style={[styles.gridHeaderCell, { width: 80, textAlign: 'center', color: theme.textSecondary }]}>Actions</Text>
                                     </View>
 
                                     {/* Table Row 1 */}
@@ -244,27 +246,27 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                             </ScrollView>
 
                             {/* Footer Terms & Total */}
-                            <View style={styles.itemsFooter}>
-                                <Text style={styles.footerTermsText}>
+                            <View style={[styles.itemsFooter, { borderTopColor: theme.border }]}>
+                                <Text style={[styles.footerTermsText, { color: theme.textSecondary }]}>
                                     Terms and Conditions, also known as Terms of Service or Terms of Use, are a legally binding agreement between a service provider and its users.
                                 </Text>
 
                                 <View style={styles.summaryBox}>
                                     <View style={styles.summaryRow}>
-                                        <Text style={styles.summaryLabel}>Subtotal</Text>
-                                        <Text style={styles.summaryValue}>USD 256,560.00</Text>
+                                        <Text style={[styles.summaryLabel, { color: theme.textSecondary }]}>Subtotal</Text>
+                                        <Text style={[styles.summaryValue, { color: theme.text }]}>USD 256,560.00</Text>
                                     </View>
                                     <View style={styles.summaryRow}>
-                                        <Text style={styles.summaryLabel}>Tax (0%)</Text>
-                                        <Text style={styles.summaryValue}>USD 0.00</Text>
+                                        <Text style={[styles.summaryLabel, { color: theme.textSecondary }]}>Tax (0%)</Text>
+                                        <Text style={[styles.summaryValue, { color: theme.text }]}>USD 0.00</Text>
                                     </View>
                                     <View style={styles.summaryRow}>
-                                        <Text style={styles.summaryLabel}>Shipping</Text>
-                                        <Text style={styles.summaryValue}>USD 0.00</Text>
+                                        <Text style={[styles.summaryLabel, { color: theme.textSecondary }]}>Shipping</Text>
+                                        <Text style={[styles.summaryValue, { color: theme.text }]}>USD 0.00</Text>
                                     </View>
-                                    <View style={[styles.summaryRow, styles.summaryTotalRow]}>
-                                        <Text style={styles.totalLabel}>Grand Total</Text>
-                                        <Text style={styles.totalValue}>USD 256,560.00</Text>
+                                    <View style={[styles.summaryRow, styles.summaryTotalRow, { borderTopColor: theme.borderLight }]}>
+                                        <Text style={[styles.totalLabel, { color: theme.text }]}>Grand Total</Text>
+                                        <Text style={[styles.totalValue, { color: theme.primaryLight }]}>USD 256,560.00</Text>
                                     </View>
                                 </View>
                             </View>
@@ -275,11 +277,11 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
 
                 {/* Terms and Conditions Section */}
                 <View
-                    style={styles.sectionCard}
+                    style={[styles.sectionCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
                     onLayout={(event) => handleLayout('Terms', event)}
                 >
                     <TouchableOpacity
-                        style={styles.sectionHeader}
+                        style={[styles.sectionHeader, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}
                         onPress={() => setIsTermsExpanded(!isTermsExpanded)}
                         activeOpacity={0.7}
                     >
@@ -287,11 +289,11 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                             <View style={[styles.sectionIconBox, { backgroundColor: '#ECFDF5' }]}>
                                 <MaterialCommunityIcons name="file-document-edit-outline" size={18} color="#10B981" />
                             </View>
-                            <Text style={styles.sectionTitle}>Terms and Conditions</Text>
+                            <Text style={[styles.sectionTitle, { color: theme.text }]}>Terms and Conditions</Text>
                         </View>
                         <View style={styles.sectionHeaderRight}>
-                            <Ionicons name="time-outline" size={18} color="#94A3B8" style={{ marginRight: 8 }} />
-                            <Ionicons name={isTermsExpanded ? "chevron-up" : "chevron-down"} size={18} color="#94A3B8" />
+                            <Ionicons name="time-outline" size={18} color={theme.textTertiary} style={{ marginRight: 8 }} />
+                            <Ionicons name={isTermsExpanded ? "chevron-up" : "chevron-down"} size={18} color={theme.textTertiary} />
                         </View>
                     </TouchableOpacity>
 
@@ -299,30 +301,30 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                         <View style={styles.sectionContent}>
                             <View style={styles.formGrid}>
                                 <View style={styles.formGroup}>
-                                    <Text style={styles.label}>Payment Terms <Text style={styles.required}>*</Text></Text>
-                                    <View style={styles.inputBox}>
-                                        <Text style={styles.inputText}>40% Against Documents (CAD)</Text>
+                                    <Text style={[styles.label, { color: theme.textSecondary }]}>Payment Terms <Text style={styles.required}>*</Text></Text>
+                                    <View style={[styles.inputBox, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                        <Text style={[styles.inputText, { color: theme.text }]}>40% Against Documents (CAD)</Text>
                                     </View>
                                 </View>
                                 <View style={styles.formGroup}>
-                                    <Text style={styles.label}>Incoterms <Text style={styles.required}>*</Text></Text>
-                                    <View style={[styles.inputBox, styles.dropdown]}>
-                                        <Text style={styles.inputText}>CIF</Text>
-                                        <Ionicons name="chevron-down" size={16} color="#64748B" />
+                                    <Text style={[styles.label, { color: theme.textSecondary }]}>Incoterms <Text style={styles.required}>*</Text></Text>
+                                    <View style={[styles.inputBox, styles.dropdown, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                        <Text style={[styles.inputText, { color: theme.text }]}>CIF</Text>
+                                        <Ionicons name="chevron-down" size={16} color={theme.textSecondary} />
                                     </View>
                                 </View>
                             </View>
                             <View style={styles.formGrid}>
                                 <View style={styles.formGroup}>
-                                    <Text style={styles.label}>Delivery Terms</Text>
-                                    <View style={[styles.inputBox, styles.inputDisabled]}>
-                                        <Text style={styles.placeholderText}>Enter Delivery Terms</Text>
+                                    <Text style={[styles.label, { color: theme.textSecondary }]}>Delivery Terms</Text>
+                                    <View style={[styles.inputBox, styles.inputDisabled, { backgroundColor: theme.backgroundTertiary, borderColor: theme.border }]}>
+                                        <Text style={[styles.placeholderText, { color: theme.textTertiary }]}>Enter Delivery Terms</Text>
                                     </View>
                                 </View>
                                 <View style={styles.formGroup}>
-                                    <Text style={styles.label}>Country of Origin of Goods</Text>
-                                    <View style={[styles.inputBox, styles.inputDisabled]}>
-                                        <Text style={styles.placeholderText}>Enter Country of Origin of Goods</Text>
+                                    <Text style={[styles.label, { color: theme.textSecondary }]}>Country of Origin of Goods</Text>
+                                    <View style={[styles.inputBox, styles.inputDisabled, { backgroundColor: theme.backgroundTertiary, borderColor: theme.border }]}>
+                                        <Text style={[styles.placeholderText, { color: theme.textTertiary }]}>Enter Country of Origin of Goods</Text>
                                     </View>
                                 </View>
                             </View>
@@ -332,11 +334,11 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
 
                 {/* Regulatory Details Section */}
                 <View
-                    style={styles.sectionCard}
+                    style={[styles.sectionCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
                     onLayout={(event) => handleLayout('Regulatory', event)}
                 >
                     <TouchableOpacity
-                        style={styles.sectionHeader}
+                        style={[styles.sectionHeader, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}
                         onPress={() => setIsRegulatoryExpanded(!isRegulatoryExpanded)}
                         activeOpacity={0.7}
                     >
@@ -344,11 +346,11 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                             <View style={[styles.sectionIconBox, { backgroundColor: '#ECFEFF' }]}>
                                 <MaterialCommunityIcons name="shield-check-outline" size={18} color="#06B6D4" />
                             </View>
-                            <Text style={styles.sectionTitle}>Regulatory Details</Text>
+                            <Text style={[styles.sectionTitle, { color: theme.text }]}>Regulatory Details</Text>
                         </View>
                         <View style={styles.sectionHeaderRight}>
-                            <Ionicons name="time-outline" size={18} color="#94A3B8" style={{ marginRight: 8 }} />
-                            <Ionicons name={isRegulatoryExpanded ? "chevron-up" : "chevron-down"} size={18} color="#94A3B8" />
+                            <Ionicons name="time-outline" size={18} color={theme.textTertiary} style={{ marginRight: 8 }} />
+                            <Ionicons name={isRegulatoryExpanded ? "chevron-up" : "chevron-down"} size={18} color={theme.textTertiary} />
                         </View>
                     </TouchableOpacity>
 
@@ -356,17 +358,17 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
                         <View style={styles.sectionContent}>
                             <View style={styles.formGrid}>
                                 <View style={styles.formGroup}>
-                                    <Text style={styles.label}>Signature</Text>
-                                    <View style={[styles.inputBox, styles.dropdown]}>
-                                        <Text style={styles.inputText}>Expedite</Text>
-                                        <Ionicons name="chevron-down" size={16} color="#64748B" />
+                                    <Text style={[styles.label, { color: theme.textSecondary }]}>Signature</Text>
+                                    <View style={[styles.inputBox, styles.dropdown, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                        <Text style={[styles.inputText, { color: theme.text }]}>Expedite</Text>
+                                        <Ionicons name="chevron-down" size={16} color={theme.textSecondary} />
                                     </View>
                                 </View>
                                 <View style={styles.formGroup}>
-                                    <Text style={styles.label}>Bank Details</Text>
-                                    <View style={[styles.inputBox, styles.dropdown]}>
-                                        <Text style={styles.inputText}>SBI Bank</Text>
-                                        <Ionicons name="chevron-down" size={16} color="#64748B" />
+                                    <Text style={[styles.label, { color: theme.textSecondary }]}>Bank Details</Text>
+                                    <View style={[styles.inputBox, styles.dropdown, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }]}>
+                                        <Text style={[styles.inputText, { color: theme.text }]}>SBI Bank</Text>
+                                        <Ionicons name="chevron-down" size={16} color={theme.textSecondary} />
                                     </View>
                                 </View>
                             </View>
@@ -376,29 +378,29 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
 
                 {/* Accept Quotation Section */}
                 <View
-                    style={[styles.sectionCard, { borderColor: '#F1F5F9' }]}
+                    style={[styles.sectionCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
                     onLayout={(event) => handleLayout('Accept', event)}
                 >
                     <TouchableOpacity
-                        style={styles.sectionHeader}
+                        style={[styles.sectionHeader, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}
                         onPress={() => setIsAcceptExpanded(!isAcceptExpanded)}
                     >
                         <View style={styles.sectionTitleRow}>
                             <View style={[styles.sectionIconBox, { backgroundColor: '#ECFDF5' }]}>
                                 <MaterialCommunityIcons name="check-circle-outline" size={18} color="#10B981" />
                             </View>
-                            <Text style={styles.sectionTitle}>Accept Quotation</Text>
+                            <Text style={[styles.sectionTitle, { color: theme.text }]}>Accept Quotation</Text>
                         </View>
                         <View style={styles.sectionHeaderRight}>
-                            <Ionicons name="time-outline" size={18} color="#94A3B8" style={{ marginRight: 8 }} />
-                            <Ionicons name={isAcceptExpanded ? "chevron-up" : "chevron-down"} size={18} color="#94A3B8" />
+                            <Ionicons name="time-outline" size={18} color={theme.textTertiary} style={{ marginRight: 8 }} />
+                            <Ionicons name={isAcceptExpanded ? "chevron-up" : "chevron-down"} size={18} color={theme.textTertiary} />
                         </View>
                     </TouchableOpacity>
 
                     {isAcceptExpanded && (
                         <View style={styles.sectionContentCentered}>
-                            <Text style={styles.centeredText}>Click below to accept the Quotation.</Text>
-                            <TouchableOpacity style={styles.acceptButton}>
+                            <Text style={[styles.centeredText, { color: theme.textSecondary }]}>Click below to accept the Quotation.</Text>
+                            <TouchableOpacity style={[styles.acceptButton, { backgroundColor: theme.primary }]}>
                                 <Text style={styles.acceptButtonText}>Accept Quotation</Text>
                             </TouchableOpacity>
                         </View>
@@ -407,41 +409,41 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
 
                 {/* Orders Section */}
                 <View
-                    style={styles.sectionCard}
+                    style={[styles.sectionCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
                     onLayout={(event) => handleLayout('Orders', event)}
                 >
                     <TouchableOpacity
-                        style={styles.sectionHeader}
+                        style={[styles.sectionHeader, { backgroundColor: theme.surface, borderBottomColor: theme.borderLight }]}
                         onPress={() => setIsOrdersExpanded(!isOrdersExpanded)}
                     >
                         <View style={styles.sectionTitleRow}>
                             <View style={[styles.sectionIconBox, { backgroundColor: '#FFF7ED' }]}>
                                 <MaterialCommunityIcons name="cart-outline" size={18} color="#F97316" />
                             </View>
-                            <Text style={styles.sectionTitle}>Orders</Text>
+                            <Text style={[styles.sectionTitle, { color: theme.text }]}>Orders</Text>
                         </View>
                         <View style={styles.sectionHeaderRight}>
-                            <Ionicons name="add" size={20} color="#64748B" style={{ marginRight: 8 }} />
-                            <Ionicons name={isOrdersExpanded ? "chevron-up" : "chevron-down"} size={18} color="#94A3B8" />
+                            <Ionicons name="add" size={20} color={theme.textSecondary} style={{ marginRight: 8 }} />
+                            <Ionicons name={isOrdersExpanded ? "chevron-up" : "chevron-down"} size={18} color={theme.textTertiary} />
                         </View>
                     </TouchableOpacity>
 
                     {isOrdersExpanded && (
                         <View style={styles.orderListContainer}>
                             {/* Header Row */}
-                            <View style={styles.orderHeaderRow}>
-                                <Text style={[styles.orderHeaderLabel, { flex: 2 }]}>ATTENTION</Text>
-                                <Text style={[styles.orderHeaderLabel, { flex: 2 }]}>COUNTRY</Text>
-                                <Text style={[styles.orderHeaderLabel, { flex: 3 }]}>AMOUNT</Text>
-                                <Text style={[styles.orderHeaderLabel, { flex: 2, textAlign: 'right' }]}>STATUS</Text>
+                            <View style={[styles.orderHeaderRow, { backgroundColor: theme.backgroundTertiary, borderBottomColor: theme.border }]}>
+                                <Text style={[styles.orderHeaderLabel, { flex: 2, color: theme.textSecondary }]}>ATTENTION</Text>
+                                <Text style={[styles.orderHeaderLabel, { flex: 2, color: theme.textSecondary }]}>COUNTRY</Text>
+                                <Text style={[styles.orderHeaderLabel, { flex: 3, color: theme.textSecondary }]}>AMOUNT</Text>
+                                <Text style={[styles.orderHeaderLabel, { flex: 2, textAlign: 'right', color: theme.textSecondary }]}>STATUS</Text>
                             </View>
                             {/* Order Item */}
-                            <View style={styles.orderItem}>
-                                <View style={[styles.avatarBox, { marginRight: 8 }]}>
-                                    <Text style={styles.avatarText}>SS</Text>
+                            <View style={[styles.orderItem, { borderBottomColor: theme.borderLight }]}>
+                                <View style={[styles.avatarBox, { marginRight: 8, backgroundColor: theme.borderLight, borderColor: theme.border }]}>
+                                    <Text style={[styles.avatarText, { color: theme.textSecondary }]}>SS</Text>
                                 </View>
-                                <Text style={[styles.orderText, { flex: 2 }]}>Kenya</Text>
-                                <Text style={[styles.orderTextBold, { flex: 3 }]}>USD 100,560.00</Text>
+                                <Text style={[styles.orderText, { flex: 2, color: theme.text }]}>Kenya</Text>
+                                <Text style={[styles.orderTextBold, { flex: 3, color: theme.text }]}>USD 100,560.00</Text>
                                 <View style={{ flex: 2, alignItems: 'flex-end' }}>
                                     <View style={styles.shipmentBadge}>
                                         <Text style={styles.shipmentBadgeText}>Shipment</Text>
