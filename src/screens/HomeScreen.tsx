@@ -10,6 +10,7 @@ import {
     Platform,
 } from 'react-native';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 import { Ionicons } from '@expo/vector-icons';
 import { BarChart } from 'react-native-chart-kit';
 
@@ -18,6 +19,7 @@ const screenWidth = width;
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { user, logout } = useAuthStore();
+    const { theme } = useThemeStore();
     const [menuVisible, setMenuVisible] = useState(false);
 
     // --- CHART CONFIG ---
@@ -86,31 +88,31 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     );
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
             {/* Header */}
-            <View style={styles.header}>
+            <View style={[styles.header, { backgroundColor: theme.headerBackground }]}>
                 <View style={styles.headerLeftContainer}>
                     <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.menuButton}>
-                        <Ionicons name="menu" size={24} color="#FFFFFF" />
+                        <Ionicons name="menu" size={24} color={theme.headerText} />
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Dashboard</Text>
+                    <Text style={[styles.headerTitle, { color: theme.headerText }]}>Dashboard</Text>
                 </View>
                 <View style={styles.headerRight}>
                     <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="search" size={20} color="#FFFFFF" />
+                        <Ionicons name="search" size={20} color={theme.headerText} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.iconButton}>
-                        <Ionicons name="notifications-outline" size={20} color="#FFFFFF" />
+                        <Ionicons name="notifications-outline" size={20} color={theme.headerText} />
                     </TouchableOpacity>
 
                     {/* User Avatar */}
                     <TouchableOpacity
-                        style={styles.headerAvatar}
+                        style={[styles.headerAvatar, { backgroundColor: theme.surface }]}
                         onPress={() => setMenuVisible(!menuVisible)}
                         activeOpacity={0.8}
                     >
                         <View style={styles.avatarCircle}>
-                            <Text style={styles.avatarInitial}>{user?.name?.[0] || 'U'}</Text>
+                            <Text style={[styles.avatarInitial, { color: theme.primary }]}>{user?.name?.[0] || 'U'}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -276,6 +278,7 @@ const styles = StyleSheet.create({
     headerLeftContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'flex-start',
     },
     menuButton: {
         marginRight: 12,
@@ -284,6 +287,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '700',
         color: '#FFFFFF',
+        textAlign: 'left',
     },
     headerRight: {
         flexDirection: 'row',

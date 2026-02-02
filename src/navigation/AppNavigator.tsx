@@ -14,6 +14,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import UsersScreen from '../screens/UsersScreen';
+import RolesScreen from '../screens/RolesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ShipmentsScreen from '../screens/ShipmentsScreen';
 import OrdersScreen from '../screens/OrdersScreen';
@@ -28,7 +29,9 @@ import InvoiceDetailsScreen from '../screens/InvoiceDetailsScreen';
 import PaymentDetailsScreen from '../screens/PaymentDetailsScreen';
 import PurchaseOrderDetailsScreen from '../screens/PurchaseOrderDetailsScreen';
 import ReportsScreen from '../screens/ReportsScreen';
+import AdminScreen from '../screens/AdminScreen';
 import GenericReportScreen from '../screens/GenericReportScreen';
+import GenericFormScreen from '../screens/GenericFormScreen';
 import Loading from '../components/Loading';
 
 const Stack = createNativeStackNavigator();
@@ -139,6 +142,15 @@ const BottomTabNavigator = () => {
                     tabBarButton: () => null,
                     tabBarItemStyle: { display: 'none' }, // Double ensure no space is taken
                     tabBarLabel: 'Users'
+                }}
+            />
+            <Tab.Screen
+                name="Roles"
+                component={RolesScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Roles'
                 }}
             />
             <Tab.Screen
@@ -258,6 +270,24 @@ const BottomTabNavigator = () => {
                     tabBarLabel: 'Report View'
                 }}
             />
+            <Tab.Screen
+                name="Admin"
+                component={AdminScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Admin'
+                }}
+            />
+            <Tab.Screen
+                name="GenericForm"
+                component={GenericFormScreen}
+                options={{
+                    tabBarButton: () => null,
+                    tabBarItemStyle: { display: 'none' },
+                    tabBarLabel: 'Form'
+                }}
+            />
         </Tab.Navigator>
     );
 };
@@ -296,8 +326,7 @@ const CustomDrawerContent = (props: any) => {
         {
             title: 'ADMIN',
             items: [
-                { label: 'Users', icon: 'account-group-outline', screen: 'Users' },
-                { label: 'Settings', icon: 'cog-outline', screen: 'TabProfile' },
+                { label: 'Admin', icon: 'shield-account', screen: 'Admin' }
             ]
         }
     ];

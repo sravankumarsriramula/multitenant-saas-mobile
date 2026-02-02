@@ -12,27 +12,28 @@ import {
     ActivityIndicator,
     TextInput
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { API_BASE_URL } from '../constants/config';
 import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
 
-interface User {
+interface Role {
     id: number;
     name: string;
-    email: string;
-    role: string;
-    tenantId: string;
+    description: string;
+    usersCount: number;
+    isSystem?: boolean;
     createdAt: string;
+    status: 'Active' | 'Inactive';
 }
 
-const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+const RolesScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { theme } = useThemeStore();
     const { token } = useAuthStore();
 
     // State
-    const [users, setUsers] = useState<User[]>([]);
+    const [roles, setRoles] = useState<Role[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -40,71 +41,68 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     // Pagination State
     const [page, setPage] = useState(1);
-    const [limit] = useState(10);
+    const [limit] = useState(10); // Items per page
     const [totalPages, setTotalPages] = useState(1);
-    const [totalUsers, setTotalUsers] = useState(0);
+    const [totalRoles, setTotalRoles] = useState(0);
 
-    const fetchUsers = useCallback(async (isRefresh = false) => {
+    const fetchRoles = useCallback(async (isRefresh = false) => {
         if (!isRefresh) setLoading(true);
         try {
-            const response = await axios.get(`${API_BASE_URL}/users`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            let data = response.data;
-            // Handle possible response structures
-            if (data.data && Array.isArray(data.data)) {
-                data = data.data;
-            } else if (!Array.isArray(data)) {
-                data = [];
-            }
+            // Static Data
+            const staticRoles: Role[] = [
+                { id: 1, name: 'Accounts', description: 'Accounts Department', usersCount: 4, status: 'Active', createdAt: new Date().toISOString() },
+                { id: 2, name: 'Admin', description: 'Administrator', usersCount: 2, status: 'Active', createdAt: new Date().toISOString() },
+                { id: 3, name: 'Client', description: 'Client Access', usersCount: 15, status: 'Active', createdAt: new Date().toISOString() },
+                { id: 4, name: 'Management', description: 'Management Team', usersCount: 3, status: 'Active', createdAt: new Date().toISOString() },
+                { id: 5, name: 'Operations', description: 'Operations Team', usersCount: 8, status: 'Active', createdAt: new Date().toISOString() },
+                { id: 6, name: 'Sales', description: 'Sales Department', usersCount: 6, status: 'Active', createdAt: new Date().toISOString() },
+                { id: 7, name: 'Super Admin', description: 'Full Access', usersCount: 1, status: 'Active', createdAt: new Date().toISOString() }
+            ];
 
             // Client-side search filtering
-            let filtered = data.filter((u: User) =>
-                u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                u.email.toLowerCase().includes(searchQuery.toLowerCase())
+            let filtered = staticRoles.filter((r: Role) =>
+                r.name.toLowerCase().includes(searchQuery.toLowerCase())
             );
 
             // Client-side pagination
             const total = Math.ceil(filtered.length / limit);
             setTotalPages(total || 1);
-            setTotalUsers(filtered.length);
+            setTotalRoles(filtered.length);
 
             const start = (page - 1) * limit;
             const end = start + limit;
             const paginated = filtered.slice(start, end);
 
-            setUsers(paginated);
+            setRoles(paginated);
         } catch (error: any) {
-            console.error('Error fetching users:', error);
-            // Fallback default on error
-            setUsers([]);
+            console.error('Error setting roles:', error);
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
-    }, [page, searchQuery, limit, token]);
+    }, [page, searchQuery, limit]);
 
     useEffect(() => {
-        fetchUsers();
-    }, [fetchUsers]);
+        fetchRoles();
+    }, [fetchRoles]);
 
     const onRefresh = () => {
         setRefreshing(true);
+        // Reset to page 1 on refresh
         setPage(1);
-        fetchUsers(true);
+        fetchRoles(true);
     };
 
-    const handleCreateUser = () => {
-        // Navigate to GenericForm for Users
-        // Ideally we should support 'Users' title in GenericForm or make a new screen?
-        // AdminScreen says `navigation.navigate('Users')`, so we are here.
-        // If we want to Add User, we can reuse GenericForm with title="User" or "Users"
-        navigation.navigate('GenericForm', { title: 'User', mode: 'create', viewMode: 'detail' });
+    const handleCreateRole = () => {
+        // Navigate to Create Screen (or use GenericForm with special param)
+        // Reusing GenericForm logic for now, or we can make a new one.
+        // Given GenericForm already has "Roles" logic, we can leverage it or replace it.
+        // Let's pass 'Roles' title but we might need to handle the detail view better.
+        navigation.navigate('GenericForm', { title: 'Roles', mode: 'create', viewMode: 'detail' });
     };
 
-    const handleEditUser = (user: User) => {
-        navigation.navigate('GenericForm', { title: 'User', roleId: user.id, mode: 'edit', initialData: user, viewMode: 'detail' });
+    const handleEditRole = (role: Role) => {
+        navigation.navigate('GenericForm', { title: 'Roles', roleId: role.id, mode: 'edit', initialData: role, viewMode: 'detail' });
     };
 
     const handlePreviousPage = () => {
@@ -115,31 +113,27 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         if (page < totalPages) setPage(p => p + 1);
     };
 
-    const renderUserItem = ({ item }: { item: User }) => (
+    const renderRoleItem = ({ item }: { item: Role }) => (
         <TouchableOpacity
             style={[styles.listItem, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}
             activeOpacity={0.7}
-            onPress={() => handleEditUser(item)}
+            onPress={() => handleEditRole(item)}
         >
             <View style={styles.cardContent}>
-                <View style={[styles.avatar, { backgroundColor: item.role.toLowerCase() === 'admin' || item.role.toLowerCase() === 'super admin' ? '#FEE2E2' : '#E0F2FE' }]}>
-                    <Text style={[styles.avatarText, { color: item.role.toLowerCase() === 'admin' || item.role.toLowerCase() === 'super admin' ? '#EF4444' : '#0284C7' }]}>
-                        {item.name.charAt(0).toUpperCase()}
-                    </Text>
-                </View>
                 <View style={styles.headerInfo}>
-                    <Text style={[styles.userName, { color: theme.text }]}>{item.name}</Text>
-                    <Text style={[styles.userEmail, { color: theme.textSecondary }]}>{item.email}</Text>
+                    <Text style={[styles.roleName, { color: theme.text }]}>{item.name}</Text>
                     <View style={styles.metaRow}>
-                        <View style={[styles.roleBadge, {
-                            backgroundColor: '#F1F5F9',
-                            borderColor: '#CBD5E1'
+                        <View style={[styles.statusBadge, {
+                            backgroundColor: item.status === 'Active' ? '#DCFCE7' : '#FEE2E2',
+                            borderColor: item.status === 'Active' ? '#166534' : '#991B1B'
                         }]}>
-                            <Text style={[styles.roleText, { color: '#475569' }]}>
-                                {item.role.toUpperCase()}
+                            <Text style={[styles.statusText, {
+                                color: item.status === 'Active' ? '#166534' : '#991B1B'
+                            }]}>
+                                {item.status.toUpperCase()}
                             </Text>
                         </View>
-                        <Text style={[styles.dateText, { color: theme.textSecondary }]}>
+                        <Text style={[styles.roleDate, { color: theme.textSecondary }]}>
                             {new Date(item.createdAt).toLocaleDateString()}
                         </Text>
                     </View>
@@ -157,13 +151,13 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <TouchableOpacity onPress={() => navigation.navigate('Admin')} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={theme.headerText} />
                     </TouchableOpacity>
-                    <Text style={[styles.headerTitle, { color: theme.headerText, marginLeft: 8 }]}>Users ({totalUsers})</Text>
+                    <Text style={[styles.headerTitle, { color: theme.headerText, marginLeft: 8 }]}>Roles ({totalRoles})</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <TouchableOpacity onPress={() => setShowSearch(!showSearch)} style={styles.addButton}>
                         <Ionicons name={showSearch ? "search" : "search-outline"} size={24} color={theme.headerText} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleCreateUser} style={styles.addButton}>
+                    <TouchableOpacity onPress={handleCreateRole} style={styles.addButton}>
                         <Ionicons name="add" size={24} color={theme.headerText} />
                     </TouchableOpacity>
                 </View>
@@ -176,12 +170,12 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                         <Ionicons name="search" size={20} color={theme.textTertiary} />
                         <TextInput
                             style={[styles.searchInput, { color: theme.text }]}
-                            placeholder="Search Users..."
+                            placeholder="Search Roles..."
                             placeholderTextColor={theme.textTertiary}
                             value={searchQuery}
                             onChangeText={(text) => {
                                 setSearchQuery(text);
-                                setPage(1);
+                                setPage(1); // Reset to page 1 on search
                             }}
                             autoFocus={true}
                         />
@@ -202,8 +196,8 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     </View>
                 ) : (
                     <FlatList
-                        data={users}
-                        renderItem={renderUserItem}
+                        data={roles}
+                        renderItem={renderRoleItem}
                         keyExtractor={(item) => item.id.toString()}
                         contentContainerStyle={styles.listContent}
                         refreshControl={
@@ -211,7 +205,7 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                         }
                         ListEmptyComponent={
                             <View style={styles.centerContainer}>
-                                <Text style={{ color: theme.textSecondary }}>No users found.</Text>
+                                <Text style={{ color: theme.textSecondary }}>No roles found.</Text>
                             </View>
                         }
                         ListFooterComponent={
@@ -238,7 +232,7 @@ const UsersScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                     />
                 )
             }
-        </SafeAreaView>
+        </SafeAreaView >
     );
 };
 
@@ -301,47 +295,67 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    headerInfo: {
-        flex: 1,
-    },
-    userName: {
-        fontSize: 16,
-        fontWeight: '700',
-        marginBottom: 2,
-    },
-    userEmail: {
-        fontSize: 12,
-        marginBottom: 4,
-    },
     metaRow: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
     },
-    roleBadge: {
+    statsBar: {
+        flexDirection: 'row',
+        paddingVertical: 12,
         paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 4,
-        borderWidth: 1,
+        borderTopWidth: 1,
+        borderTopColor: '#F1F5F9', // Fallback
+        marginTop: 0,
     },
-    roleText: {
-        fontSize: 10,
+    statItem: {
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        flex: 1, // Center it as sole item
+    },
+    statValue: {
+        fontSize: 18,
         fontWeight: '700',
     },
-    dateText: {
-        fontSize: 12,
+    statLabel: {
+        fontSize: 11,
+        fontWeight: '500',
     },
-    avatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+    iconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: '#E0F2FE',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 12,
     },
-    avatarText: {
-        fontSize: 16,
+    iconText: {
+        fontSize: 20,
         fontWeight: 'bold',
+        color: '#0284C7',
+    },
+    headerInfo: {
+        flex: 1,
+    },
+    roleName: {
+        fontSize: 16,
+        fontWeight: '700',
+        marginBottom: 2,
+    },
+    roleDate: {
+        fontSize: 12,
+    },
+    statusBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+        borderWidth: 1,
+    },
+    statusText: {
+        fontSize: 10,
+        fontWeight: '700',
     },
     paginationContainer: {
         flexDirection: 'row',
@@ -362,4 +376,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default UsersScreen;
+export default RolesScreen;
