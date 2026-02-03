@@ -263,64 +263,178 @@ const ShipmentDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ navi
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
+    container: {
+        flex: 1,
+        backgroundColor: '#F1F5F9',
+    },
+    // Premium Header
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 12,
+        paddingHorizontal: 16,
         paddingTop: Platform.OS === 'android' ? 40 : 12,
         paddingBottom: 12,
+        backgroundColor: '#FFFFFF',
         borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0',
+        elevation: 2,
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
     },
-    backButton: { marginRight: 8 },
-    headerTitleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    headerTitle: { fontSize: 16, fontWeight: '700' },
-    statusBadge: { backgroundColor: '#06B6D420', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 },
-    statusText: { fontSize: 10, fontWeight: '600', color: '#06B6D4' },
-    verticalDivider: { width: 1, height: 16, marginHorizontal: 4 },
-    companyName: { fontSize: 13, fontWeight: '600' },
-    dateText: { fontSize: 12 },
-    settingsIcon: { marginLeft: 8 },
+    backButton: { marginRight: 12 },
+    headerTitleContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8
+    },
+    headerTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#1E293B',
+        letterSpacing: -0.5,
+    },
+    statusBadge: {
+        backgroundColor: '#06B6D4',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 6,
+    },
+    statusText: {
+        color: '#FFFFFF',
+        fontSize: 10,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+    },
+    verticalDivider: {
+        width: 1,
+        height: 14,
+        backgroundColor: '#CBD5E1',
+        marginHorizontal: 6,
+    },
+    companyName: { fontSize: 13, fontWeight: '600', color: '#334155' },
+    dateText: { fontSize: 12, color: '#64748B', fontWeight: '500' },
+    settingsIcon: { padding: 4, marginLeft: 12 },
 
-    tabContainer: { borderBottomWidth: 1, paddingVertical: 8 },
-    tabScrollContent: { paddingHorizontal: 12, gap: 8 },
-    tabItem: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6, borderWidth: 1 },
-    tabText: { fontSize: 12, fontWeight: '600' },
+    // Tabs
+    tabContainer: {
+        backgroundColor: '#FFFFFF',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0',
+    },
+    tabScrollContent: { paddingHorizontal: 16, gap: 10 },
+    tabItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: '#F8FAFC',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        gap: 6
+    },
+    tabItemActive: { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' },
+    tabText: { fontSize: 12, fontWeight: '600', color: '#64748B' },
+    tabTextActive: { color: '#2563EB' },
 
-    scrollView: { flex: 1 },
-    section: { marginHorizontal: 12, marginTop: 12, borderRadius: 8, borderWidth: 1, overflow: 'hidden' },
-    sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12 },
-    sectionHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    sectionTitle: { fontSize: 15, fontWeight: '700' },
-    sectionContent: { paddingHorizontal: 12, paddingBottom: 12 },
+    scrollView: { flex: 1, padding: 12 },
 
+    // Section Cards
+    section: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        overflow: 'hidden',
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.04,
+        shadowRadius: 3,
+        elevation: 1,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 12,
+        backgroundColor: '#FFFFFF',
+        borderBottomWidth: 1,
+        borderBottomColor: '#F8FAFC'
+    },
+    sectionHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    sectionTitle: { fontSize: 14, fontWeight: '700', color: '#1E293B' },
+    sectionContent: { padding: 16 },
+
+    // Info Rows
     infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12, alignItems: 'flex-start' },
-    infoLabel: { fontSize: 13, fontWeight: '500', flex: 1 },
-    infoValue: { fontSize: 13, flex: 1.5, textAlign: 'right' },
+    infoLabel: { fontSize: 13, fontWeight: '500', color: '#64748B', flex: 1 },
+    infoValue: { fontSize: 13, fontWeight: '600', color: '#1E293B', flex: 1.5, textAlign: 'right' },
 
-    itemCard: { padding: 12, borderRadius: 6, borderWidth: 1, marginBottom: 8 },
-    itemHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
-    itemName: { fontSize: 14, fontWeight: '600' },
+    // Item Cards
+    itemCard: {
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        marginBottom: 8,
+        backgroundColor: '#F8FAFC'
+    },
+    itemHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+    itemName: { fontSize: 14, fontWeight: '600', color: '#334155' },
     itemDetails: { flexDirection: 'row', gap: 16 },
-    itemDetail: { fontSize: 12 },
+    itemDetail: { fontSize: 12, color: '#64748B', fontWeight: '500' },
 
-    trackingStep: { flexDirection: 'row', marginBottom: 16 },
-    trackingIconContainer: { alignItems: 'center', marginRight: 12 },
-    trackingDot: { width: 12, height: 12, borderRadius: 6 },
-    trackingLine: { width: 2, flex: 1, marginTop: 4 },
+    // Tracking
+    trackingStep: { flexDirection: 'row', marginBottom: 0, paddingBottom: 16 },
+    trackingIconContainer: { alignItems: 'center', marginRight: 12, width: 20 },
+    trackingDot: { width: 10, height: 10, borderRadius: 5, zIndex: 1 },
+    trackingLine: { width: 2, position: 'absolute', top: 10, bottom: -16, backgroundColor: '#E2E8F0', left: 4 },
     trackingContent: { flex: 1 },
-    trackingLocation: { fontSize: 14, fontWeight: '600', marginBottom: 2 },
-    trackingStatus: { fontSize: 13, marginBottom: 2 },
-    trackingDate: { fontSize: 12 },
+    trackingLocation: { fontSize: 13, fontWeight: '700', marginBottom: 2, color: '#1E293B' },
+    trackingStatus: { fontSize: 12, marginBottom: 2, color: '#475569' },
+    trackingDate: { fontSize: 11, color: '#94A3B8' },
 
-    documentCard: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 6, borderWidth: 1, marginBottom: 8 },
+    // Documents
+    documentCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        marginBottom: 8,
+        backgroundColor: '#FFFFFF'
+    },
     documentInfo: { flex: 1, marginLeft: 12 },
-    documentName: { fontSize: 14, fontWeight: '600', marginBottom: 2 },
-    documentMeta: { fontSize: 12 },
+    documentName: { fontSize: 13, fontWeight: '600', marginBottom: 2, color: '#1E293B' },
+    documentMeta: { fontSize: 11, color: '#64748B' },
 
-    footer: { flexDirection: 'row', padding: 12, gap: 12, borderTopWidth: 1 },
-    footerButton: { flex: 1, paddingVertical: 12, borderRadius: 8, alignItems: 'center', borderWidth: 1 },
-    footerButtonText: { fontSize: 14, fontWeight: '600' },
+    // Footer
+    footer: {
+        flexDirection: 'row',
+        padding: 16,
+        gap: 12,
+        borderTopWidth: 1,
+        borderTopColor: '#E2E8F0',
+        backgroundColor: '#FFFFFF',
+        paddingBottom: Platform.OS === 'ios' ? 24 : 16,
+    },
+    footerButton: {
+        flex: 1,
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        borderWidth: 1,
+        justifyContent: 'center'
+    },
+    footerButtonText: { fontSize: 13, fontWeight: '600' },
 });
 
 export default ShipmentDetailsScreen;

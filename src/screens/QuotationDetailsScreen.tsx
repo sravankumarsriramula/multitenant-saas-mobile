@@ -66,46 +66,47 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
             </View>
 
             {/* Tab Bar (Scrollable) */}
-            <View style={[styles.tabContainer, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
+            {/* Tab Bar (Scrollable) */}
+            <View style={styles.tabContainer}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabScrollContent}>
                     <TouchableOpacity
-                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Items' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
+                        style={[styles.tabItem, activeTab === 'Items' && styles.tabItemActive]}
                         onPress={() => scrollToSection('Items')}
                     >
-                        <MaterialCommunityIcons name="cube-outline" size={16} color={activeTab === 'Items' ? theme.text : theme.textSecondary} />
-                        <Text style={[styles.tabText, { color: activeTab === 'Items' ? theme.text : theme.textSecondary }]}>Items</Text>
+                        <MaterialCommunityIcons name="cube-outline" size={16} color={activeTab === 'Items' ? '#2563EB' : '#64748B'} />
+                        <Text style={[styles.tabText, activeTab === 'Items' && styles.tabTextActive]}>Items</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Terms' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
+                        style={[styles.tabItem, activeTab === 'Terms' && styles.tabItemActive]}
                         onPress={() => scrollToSection('Terms')}
                     >
-                        <MaterialCommunityIcons name="file-document-edit-outline" size={16} color="#10B981" />
-                        <Text style={[styles.tabText, { color: '#10B981' }]}>Terms And Conditions</Text>
+                        <MaterialCommunityIcons name="file-document-edit-outline" size={16} color={activeTab === 'Terms' ? '#2563EB' : '#64748B'} />
+                        <Text style={[styles.tabText, activeTab === 'Terms' && styles.tabTextActive]}>Terms And Conditions</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Regulatory' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
+                        style={[styles.tabItem, activeTab === 'Regulatory' && styles.tabItemActive]}
                         onPress={() => scrollToSection('Regulatory')}
                     >
-                        <MaterialCommunityIcons name="shield-check-outline" size={16} color="#06B6D4" />
-                        <Text style={[styles.tabText, { color: '#06B6D4' }]}>Regulatory Details</Text>
+                        <MaterialCommunityIcons name="shield-check-outline" size={16} color={activeTab === 'Regulatory' ? '#2563EB' : '#64748B'} />
+                        <Text style={[styles.tabText, activeTab === 'Regulatory' && styles.tabTextActive]}>Regulatory Details</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Accept' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
+                        style={[styles.tabItem, activeTab === 'Accept' && styles.tabItemActive]}
                         onPress={() => scrollToSection('Accept')}
                     >
-                        <MaterialCommunityIcons name="check-circle-outline" size={16} color="#10B981" />
-                        <Text style={[styles.tabText, { color: '#10B981' }]}>Accept Quotation</Text>
+                        <MaterialCommunityIcons name="check-circle-outline" size={16} color={activeTab === 'Accept' ? '#2563EB' : '#64748B'} />
+                        <Text style={[styles.tabText, activeTab === 'Accept' && styles.tabTextActive]}>Accept Quotation</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.tabItem, { backgroundColor: theme.inputBackground, borderColor: theme.inputBorder }, activeTab === 'Orders' && { backgroundColor: theme.borderLight, borderColor: theme.borderDark }]}
+                        style={[styles.tabItem, activeTab === 'Orders' && styles.tabItemActive]}
                         onPress={() => scrollToSection('Orders')}
                     >
-                        <MaterialCommunityIcons name="cart-outline" size={16} color="#F97316" />
-                        <Text style={[styles.tabText, { color: '#F97316' }]}>Orders</Text>
+                        <MaterialCommunityIcons name="cart-outline" size={16} color={activeTab === 'Orders' ? '#2563EB' : '#64748B'} />
+                        <Text style={[styles.tabText, activeTab === 'Orders' && styles.tabTextActive]}>Orders</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </View>
@@ -462,9 +463,9 @@ const QuotationDetailsScreen: React.FC<{ navigation: any, route: any }> = ({ nav
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8FAFC',
+        backgroundColor: '#F1F5F9', // Light slate background
     },
-    // Header
+    // Premium Header
     header: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -473,105 +474,295 @@ const styles = StyleSheet.create({
         paddingBottom: 12,
         backgroundColor: '#FFFFFF',
         borderBottomWidth: 1,
-        borderBottomColor: '#F1F5F9',
+        borderBottomColor: '#E2E8F0',
+        elevation: 2,
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
     },
-    backButton: { marginRight: 16 },
-    headerTitleContainer: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    headerTitle: { fontSize: 18, fontWeight: '700', color: '#1E293B' },
-    statusBadge: { backgroundColor: '#06B6D4', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 12 },
-    statusText: { color: '#FFFFFF', fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
-
-    // Sub-Header Styles (Cleaned up)
-    companyName: { fontSize: 13, fontWeight: '700', color: '#1E293B', marginLeft: 8 },
-    dateText: { fontSize: 13, color: '#64748B', marginLeft: 8 },
-    settingsIcon: { padding: 4, marginLeft: 8 },
+    backButton: { marginRight: 12 },
+    headerTitleContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8
+    },
+    headerTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#1E293B',
+        letterSpacing: -0.5,
+    },
+    statusBadge: {
+        backgroundColor: '#06B6D4',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 6,
+    },
+    statusText: {
+        color: '#FFFFFF',
+        fontSize: 10,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+    },
     verticalDivider: {
         width: 1,
-        height: 16,
+        height: 14,
         backgroundColor: '#CBD5E1',
-        marginHorizontal: 8,
+        marginHorizontal: 6,
+    },
+    companyName: {
+        fontSize: 13,
+        fontWeight: '600',
+        color: '#334155'
+    },
+    dateText: {
+        fontSize: 12,
+        color: '#64748B',
+        fontWeight: '500'
+    },
+    settingsIcon: { padding: 4, marginLeft: 12 },
+
+    // Modern Tabs
+    tabContainer: {
+        backgroundColor: '#FFFFFF',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0',
+    },
+    tabScrollContent: {
+        paddingHorizontal: 16,
+        gap: 10
+    },
+    tabItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 20, // Pill shape
+        backgroundColor: '#F8FAFC',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        gap: 6
+    },
+    tabItemActive: {
+        backgroundColor: '#EFF6FF',
+        borderColor: '#BFDBFE'
+    },
+    tabText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#64748B'
+    },
+    tabTextActive: {
+        color: '#2563EB'
     },
 
-    // Tabs
-    tabContainer: { backgroundColor: '#FFFFFF', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#E2E8F0' },
-    tabScrollContent: { paddingHorizontal: 16, gap: 12 },
-    tabItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, backgroundColor: '#F8FAFC', borderWidth: 1, borderColor: '#E2E8F0', gap: 6 },
-    tabItemActive: { backgroundColor: '#F1F5F9', borderColor: '#CBD5E1' }, // Items is active
-    tabText: { fontSize: 12, fontWeight: '600', color: '#64748B' },
-
     // Content
-    contentScroll: { padding: 16 },
-
-    // Items Section
-    itemsSectionCard: { padding: 0 },
-    itemsContent: { padding: 12 },
-    itemsToolbar: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-    searchBar: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 4, paddingHorizontal: 8, height: 36 },
-    searchInput: { flex: 1, marginLeft: 8, fontSize: 13, color: '#1E293B', paddingVertical: 0 },
-    filterButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 4, paddingHorizontal: 12, height: 36, gap: 6 },
-    filterText: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
-
-    actionButtonsRow: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginBottom: 12 },
-    actionBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 4, paddingHorizontal: 10, paddingVertical: 6, gap: 6 },
-    actionBtnText: { fontSize: 12, fontWeight: '600', color: '#1E293B' },
-
-    // Grid Scroll
-    gridScroll: { marginBottom: 16 },
-    gridHeader: { flexDirection: 'row', backgroundColor: '#F8FAFC', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#E2E8F0' },
-    gridHeaderCell: { fontSize: 11, fontWeight: '700', color: '#475569', paddingHorizontal: 8 },
-    gridRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
-    gridCell: { fontSize: 12, color: '#334155', paddingHorizontal: 8 },
-    gridCellBold: { fontSize: 12, fontWeight: '700', color: '#1E293B', paddingHorizontal: 8 },
-    gridCellTextBlue: { fontSize: 12, fontWeight: '500', color: '#2563EB' },
-
-    // Footer
-    itemsFooter: { marginTop: 16, borderTopWidth: 1, borderTopColor: '#E2E8F0', paddingTop: 16 },
-    footerTermsText: { fontSize: 11, color: '#64748B', marginBottom: 16, lineHeight: 16 },
-    summaryBox: {},
-    summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-    summaryTotalRow: { borderTopWidth: 1, borderTopColor: '#F1F5F9', paddingTop: 12, marginTop: 4, marginBottom: 0 },
-    summaryLabel: { fontSize: 13, color: '#64748B' },
-    summaryValue: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
-    totalLabel: { fontSize: 14, fontWeight: '700', color: '#1E293B' },
-    totalValue: { fontSize: 16, fontWeight: '800', color: '#2563EB' },
+    contentScroll: { padding: 12 }, // Tighter padding
 
     // Section Cards
-    sectionCard: { backgroundColor: '#FFFFFF', borderRadius: 8, marginBottom: 16, borderWidth: 1, borderColor: '#E2E8F0', overflow: 'hidden' },
-    sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
-    sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    sectionIconBox: { width: 28, height: 28, borderRadius: 6, alignItems: 'center', justifyContent: 'center' },
-    sectionTitle: { fontSize: 14, fontWeight: '700', color: '#1E293B' },
+    sectionCard: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        overflow: 'hidden',
+        shadowColor: '#64748B',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.04,
+        shadowRadius: 3,
+        elevation: 1,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 12,
+        backgroundColor: '#FFFFFF',
+        borderBottomWidth: 1,
+        borderBottomColor: '#F8FAFC'
+    },
+    sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    sectionIconBox: {
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#1E293B'
+    },
     sectionHeaderRight: { flexDirection: 'row', alignItems: 'center' },
-    sectionContent: { padding: 16 },
+    sectionContent: { padding: 12 }, // Compact padding
 
     // Forms
     formGrid: { flexDirection: 'row', gap: 12, marginBottom: 12 },
     formGroup: { flex: 1 },
-    label: { fontSize: 12, fontWeight: '500', color: '#64748B', marginBottom: 6 },
+    label: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: '#64748B',
+        marginBottom: 4,
+        textTransform: 'uppercase',
+    },
     required: { color: '#EF4444' },
-    inputBox: { backgroundColor: '#F8FAFC', borderWidth: 1, borderColor: '#CBD5E1', borderRadius: 6, paddingHorizontal: 12, paddingVertical: 10 },
-    inputDisabled: { backgroundColor: '#F1F5F9', borderColor: '#E2E8F0' },
+    inputBox: {
+        backgroundColor: '#F8FAFC',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 10
+    },
+    inputDisabled: {
+        backgroundColor: '#F1F5F9',
+        borderColor: '#E2E8F0'
+    },
     dropdown: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    inputText: { fontSize: 13, color: '#1E293B' },
+    inputText: { fontSize: 13, color: '#1E293B', fontWeight: '500' },
     placeholderText: { fontSize: 13, color: '#94A3B8' },
 
     // Centered Content (Accept Quote)
-    sectionContentCentered: { padding: 24, alignItems: 'center', justifyContent: 'center' },
-    centeredText: { fontSize: 14, color: '#64748B', marginBottom: 16 },
-    acceptButton: { backgroundColor: '#1E293B', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 6 },
+    sectionContentCentered: { padding: 20, alignItems: 'center', justifyContent: 'center' },
+    centeredText: { fontSize: 13, color: '#64748B', marginBottom: 16, textAlign: 'center' },
+    acceptButton: {
+        backgroundColor: '#0F172A',
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        shadowColor: '#0F172A',
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
+    },
     acceptButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
+
+    // Items Specific
+    itemsSectionCard: { padding: 0 },
+    itemsContent: { padding: 12 },
+    itemsToolbar: { flexDirection: 'row', gap: 10, marginBottom: 12 },
+    searchBar: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F8FAFC',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        height: 40
+    },
+    searchInput: { flex: 1, marginLeft: 8, fontSize: 13, color: '#1E293B' },
+    filterButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        height: 40,
+        gap: 6
+    },
+    filterText: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
+
+    actionButtonsRow: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginBottom: 12 },
+    actionBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        borderRadius: 6,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        gap: 6
+    },
+    actionBtnText: { fontSize: 12, fontWeight: '600', color: '#475569' },
+
+    // Grid Scroll
+    gridScroll: { marginBottom: 16, borderRadius: 8, borderWidth: 1, borderColor: '#E2E8F0', overflow: 'hidden' },
+    gridHeader: {
+        flexDirection: 'row',
+        backgroundColor: '#F1F5F9',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0'
+    },
+    gridHeaderCell: {
+        fontSize: 11,
+        fontWeight: '700',
+        color: '#64748B',
+        paddingHorizontal: 8,
+        textTransform: 'uppercase',
+    },
+    gridRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F8FAFC',
+        backgroundColor: '#FFFFFF'
+    },
+    gridCell: { fontSize: 12, color: '#334155', paddingHorizontal: 8, fontWeight: '500' },
+    gridCellBold: { fontSize: 12, fontWeight: '700', color: '#0F172A', paddingHorizontal: 8 },
+    gridCellTextBlue: { fontSize: 12, fontWeight: '600', color: '#2563EB' },
+
+    // Footer
+    itemsFooter: { marginTop: 8, borderTopWidth: 1, borderTopColor: '#E2E8F0', paddingTop: 16 },
+    footerTermsText: { fontSize: 11, color: '#94A3B8', marginBottom: 16, lineHeight: 16 },
+    summaryBox: {},
+    summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
+    summaryTotalRow: { borderTopWidth: 1, borderTopColor: '#E2E8F0', paddingTop: 12, marginTop: 4, marginBottom: 0 },
+    summaryLabel: { fontSize: 13, color: '#64748B', fontWeight: '500' },
+    summaryValue: { fontSize: 13, fontWeight: '600', color: '#334155' },
+    totalLabel: { fontSize: 14, fontWeight: '700', color: '#0F172A' },
+    totalValue: { fontSize: 16, fontWeight: '800', color: '#2563EB' },
 
     // Orders Grid
     orderListContainer: { padding: 0 },
-    orderHeaderRow: { flexDirection: 'row', backgroundColor: '#F8FAFC', paddingVertical: 8, paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: '#E2E8F0' },
-    orderHeaderLabel: { fontSize: 10, fontWeight: '700', color: '#64748B' },
-    orderItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
-    avatarBox: { width: 24, height: 24, borderRadius: 4, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
-    avatarText: { fontSize: 10, fontWeight: '600', color: '#64748B' },
-    orderText: { fontSize: 12, color: '#1E293B' },
-    orderTextBold: { fontSize: 12, fontWeight: '700', color: '#1E293B' },
-    shipmentBadge: { backgroundColor: '#06B6D4', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
-    shipmentBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '600' }
+    orderHeaderRow: {
+        flexDirection: 'row',
+        backgroundColor: '#F8FAFC',
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E2E8F0'
+    },
+    orderHeaderLabel: { fontSize: 10, fontWeight: '700', color: '#64748B', textTransform: 'uppercase' },
+    orderItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F8FAFC'
+    },
+    avatarBox: {
+        width: 28,
+        height: 28,
+        borderRadius: 6,
+        backgroundColor: '#F1F5F9',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: '#E2E8F0'
+    },
+    avatarText: { fontSize: 11, fontWeight: '700', color: '#64748B' },
+    orderText: { fontSize: 12, color: '#334155', fontWeight: '500' },
+    orderTextBold: { fontSize: 12, fontWeight: '700', color: '#0F172A' },
+    shipmentBadge: { backgroundColor: '#E0F2FE', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+    shipmentBadgeText: { color: '#0284C7', fontSize: 10, fontWeight: '700' }
 });
 
 export default QuotationDetailsScreen;
