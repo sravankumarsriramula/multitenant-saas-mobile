@@ -1,0 +1,16 @@
+diff --git a/node_modules/expo-linear-gradient/android/build.gradle b/node_modules/expo-linear-gradient/android/build.gradle
+index 35f77a5..dfc2bf9 100644
+--- a/node_modules/expo-linear-gradient/android/build.gradle
++++ b/node_modules/expo-linear-gradient/android/build.gradle
+@@ -1,8 +1,10 @@
+ plugins {
+   id 'com.android.library'
+-  id 'expo-module-gradle-plugin'
+ }
+ 
++apply from: new File(projectDir, "../../expo-modules-core/android/ExpoModulesCorePlugin.gradle")
++applyKotlinExpoModulesCorePlugin()
++
+ group = 'host.exp.exponent'
+ version = '15.0.8'
+ 
